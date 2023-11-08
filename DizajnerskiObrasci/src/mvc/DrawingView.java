@@ -10,6 +10,7 @@ import geometry.Shape;
 
 
 public class DrawingView extends JPanel {
+	
 	private DrawingModel model;
 
 	public void setModel(DrawingModel model) {
@@ -20,16 +21,10 @@ public class DrawingView extends JPanel {
 	@Override
 	public void paint(Graphics g) {
 		super.paint(g);
-		Shape currentShape;
 		if (model != null) {
 			Iterator<Shape> it = model.getShapeList().iterator();
-
 			while (it.hasNext()) {
-				
-				currentShape = it.next();
-				
-				currentShape.draw(g);
-				
+				it.next().draw(g);;				
 			}
 		}
 	}

@@ -11,6 +11,7 @@ public class DrawingController {
 	private DrawingModel model;
 	
 	public DrawingController(DrawingFrame frame, DrawingModel model) {
+		super();
 		this.frame = frame;
 		this.model = model;
 	}
