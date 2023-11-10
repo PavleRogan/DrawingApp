@@ -2,27 +2,88 @@ package mvc;
 
 import java.util.ArrayList;
 
+import command.Command;
+import geometry.Point;
 import geometry.Shape;
 
 
 public class DrawingModel {
 
 	private ArrayList <Shape> shapeList = new ArrayList<Shape>();
+	private int i;
 	
-	public void add (Shape shape) {
-		shapeList.add(shape);
-	}
+	private ArrayList<Command> undoList = new ArrayList<>();
+	private ArrayList<Command> redoList = new ArrayList<>();
 	
-	public void remove(Shape shape) { 
+	
+	public void removeShape(Shape shape) { 
 		
 		shapeList.remove(shape);
 	}
 	
-	public Shape get(int index) {
+	public Shape getShape(int index) {
 		 return shapeList.get(index);
+	}
+	
+	public ArrayList<Command> getUndoList() {
+		return undoList;
+	}
+
+	public void setUndoList(ArrayList<Command> undoList) {
+		this.undoList = undoList;
+	}
+
+	public ArrayList<Command> getRedoList() {
+		return redoList;
+	}
+
+	public void setRedoList(ArrayList<Command> redoList) {
+		this.redoList = redoList;
+	}
+
+	public void setShape(int index, Shape shape) {
+		shapeList.set(index, shape);
 	}
 	
 	public ArrayList<Shape> getShapeList() {
 		return shapeList;
 	}
+	
+	public void deselect() {
+		shapeList.forEach(shape -> shape.setSelected(false));
+	}
+	
+	public void select(Point point) {
+		for (i = shapeList.size()-1; i >= 0; i--) {
+			if (shapeList.get(i).contains(point.getX(), point.getY())) {
+				shapeList.get(i).setSelected(true);
+				return;
+			}
+		}
+		
+	}
+	
+	public void removeSelected() {
+		shapeList.removeIf(shape -> shape.isSelected());
+		
+	}
+	
+	public boolean isEmpty() {
+		return shapeList.isEmpty();
+	}
+	
+	public int getSelected() {
+		for (i = shapeList.size()-1; i >= 0; i--) {
+			if (shapeList.get(i).isSelected()) {
+				return i;
+			}
+		}
+		return -1;
+	}
+	public void addShape(Shape shape) {
+		shapeList.add(shape);
+		
+		
+	}
+
 }

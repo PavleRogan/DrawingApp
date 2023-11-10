@@ -17,12 +17,12 @@ public class RemoveShapeCmd implements Command {
 	
 	@Override
 	public void execute() {
-		model.remove(shape);
+		model.removeShape(shape);
 	}
 
 	@Override
 	public void unexecute() {
-		model.add(shape);
+		model.addShape(shape);
 	}
 
 }
