@@ -5,7 +5,7 @@ import java.awt.Graphics;
 
 public class Rectangle extends SurfaceShape {
 	
-	private Point upperLeftPoint;
+	private Point upperLeftPoint = new Point();
 	private int width;
 	private int height;
 	
@@ -125,6 +125,7 @@ public class Rectangle extends SurfaceShape {
 		this.height = height;
 	}
 	
+	
 	public String toString() {
 		return "Upper Left Point=" + upperLeftPoint + ", width=" + width + ", height=" + height;
 	}
@@ -134,7 +135,18 @@ public class Rectangle extends SurfaceShape {
 		this.upperLeftPoint.moveTo(x, y);
 		
 	}
+	
+	public Rectangle deepCopy(Rectangle rectangle) {
+		rectangle.getUpperLeftPoint().setX(this.getUpperLeftPoint().getX());
+		rectangle.getUpperLeftPoint().setY(this.getUpperLeftPoint().getY());
+		rectangle.setHeight(this.getHeight());
+		rectangle.setWidth(this.getWidth());
+		rectangle.setColor(this.getColor());
+		rectangle.setInnerColor(this.getInnerColor());
+		return rectangle;
+	}
 
+	
 	
 	
 

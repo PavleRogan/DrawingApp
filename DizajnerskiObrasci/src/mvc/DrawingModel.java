@@ -82,8 +82,13 @@ public class DrawingModel {
 	}
 	public void addShape(Shape shape) {
 		shapeList.add(shape);
-		
-		
+	}
+	
+	public void addToUndoList (Command cmd) {
+		System.out.println("Add to undoList" + cmd.getCmdName());
+		if(!undoList.contains(cmd)) {
+			undoList.add(cmd);
+		}
 	}
 
 }

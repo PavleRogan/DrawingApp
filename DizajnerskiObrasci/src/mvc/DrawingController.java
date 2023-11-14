@@ -7,6 +7,12 @@ import java.awt.event.MouseEvent;
 import javax.swing.JOptionPane;
 
 import command.AddShapeCmd;
+import command.RemoveShapeCmd;
+import command.UpdateCircleCmd;
+import command.UpdateDonutCmd;
+import command.UpdateLineCmd;
+import command.UpdatePointCmd;
+import command.UpdateRectCmd;
 import drawing.DlgCircle;
 import drawing.DlgDonut;
 import drawing.DlgLine;
@@ -30,6 +36,12 @@ public class DrawingController {
 	private DrawingFrame frame;
 	private DrawingModel model;
 	private AddShapeCmd addShapeCmd;
+	private RemoveShapeCmd removeShapeCmd;
+	private UpdatePointCmd updatePointCmd;
+	private UpdateLineCmd updateLineCmd;
+	private UpdateRectCmd updateRectCmd;
+	private UpdateCircleCmd updateCircleCmd;
+	private UpdateDonutCmd updateDonutCmd;
 	
 	
 	public DrawingController(DrawingFrame frame, DrawingModel model) {
@@ -68,7 +80,9 @@ public class DrawingController {
 				dlgLine.setLine(line);
 				dlgLine.setColor(frame.color);
 				dlgLine.setVisible(true);
-				if(dlgLine.getLine()!= null) model.addShape(dlgLine.getLine());
+				if(dlgLine.getLine()!= null) {
+					addActionToUndo(dlgLine.getLine());
+				}
 				waitingEndPoint=false;
 				frame.repaint();
 				return;
@@ -81,7 +95,7 @@ public class DrawingController {
 			dlgCircle.setPoint(mouseClick);
 			dlgCircle.setColors(frame.innerColor, frame.color);
 			dlgCircle.setVisible(true);
-			if(dlgCircle.getCircle() != null) model.addShape(dlgCircle.getCircle());
+			if(dlgCircle.getCircle() != null) addActionToUndo(dlgCircle.getCircle());
 			frame.repaint();
 			return;
 		}else if(frame.tglbtnRectangle.isSelected()) {
@@ -89,7 +103,7 @@ public class DrawingController {
 			dlgRectangle.setPoint(mouseClick);
 			dlgRectangle.setColors(frame.color, frame.innerColor);
 			dlgRectangle.setVisible(true);
-			if(dlgRectangle.getRectangle() != null) model.addShape(dlgRectangle.getRectangle());
+			if(dlgRectangle.getRectangle() != null) addActionToUndo(dlgRectangle.getRectangle());
 			frame.repaint();
 			return;
 		}else if(frame.tglbtnDonut.isSelected()) {
@@ -97,7 +111,7 @@ public class DrawingController {
 			dlgDonut.setPoint(mouseClick);
 			dlgDonut.setColors(frame.color, frame.innerColor);
 			dlgDonut.setVisible(true);
-			if(dlgDonut.getDonut() != null) model.addShape(dlgDonut.getDonut());
+			if(dlgDonut.getDonut() != null) addActionToUndo(dlgDonut.getDonut());
 			frame.repaint();
 			return;	
 			
@@ -140,13 +154,20 @@ public class DrawingController {
 	public void actionPerformedModify() {
 		int index = model.getSelected();
 		if (index == -1) return;
+		
 		Shape shape = model.getShape(index);
 		if (shape instanceof Point) {
 			DlgPoint dlgPoint = new DlgPoint();
 			dlgPoint.setPoint((Point)shape);
 			dlgPoint.setVisible(true);
 			if(dlgPoint.getPoint() != null) {
-				model.setShape(index, dlgPoint.getPoint());
+				
+				Point newPoint = dlgPoint.getPoint();
+				Point oldPoint = (Point) model.getShapeList().get(index);
+				updatePointCmd = new UpdatePointCmd(oldPoint, newPoint, model);
+				updatePointCmd.execute();
+				
+				//model.setShape(index, dlgPoint.getPoint());
 				frame.repaint();
 			}
 		}else if (shape instanceof Line) {
@@ -154,7 +175,12 @@ public class DrawingController {
 			dlgLine.setLine((Line)shape);
 			dlgLine.setVisible(true);					
 			if(dlgLine.getLine() != null) {
-				model.setShape(index, dlgLine.getLine());
+				
+				Line oldState = (Line) model.getShapeList().get(model.getSelected());
+				Line newState = dlgLine.getLine();
+				updateLineCmd = new UpdateLineCmd(oldState, newState, model);
+				updateLineCmd.execute();
+				//model.setShape(index, dlgLine.getLine());
 				frame.repaint();
 			}
 		}else if (shape instanceof Rectangle) {
@@ -163,7 +189,12 @@ public class DrawingController {
 			dlgRectangle.setVisible(true);
 			
 			if(dlgRectangle.getRectangle() != null) {
-				model.setShape(index, dlgRectangle.getRectangle());
+				
+				Rectangle oldS = (Rectangle) model.getShapeList().get(model.getSelected());
+				Rectangle newS = dlgRectangle.getRectangle();
+				updateRectCmd = new UpdateRectCmd(oldS, newS, model);
+				updateRectCmd.execute();
+				//model.setShape(index, dlgRectangle.getRectangle());
 				frame.repaint();
 			}
 		}else if (shape instanceof Donut) {
@@ -172,7 +203,12 @@ public class DrawingController {
 				dlgDonut.setVisible(true);
 				
 				if(dlgDonut.getDonut() != null) {
-					model.setShape(index, dlgDonut.getDonut());
+					
+					Donut newD = dlgDonut.getDonut();
+					Donut oldD = (Donut) model.getShapeList().get(model.getSelected());
+					updateDonutCmd = new UpdateDonutCmd(oldD, newD, model);
+					updateDonutCmd.execute();
+					//model.setShape(index, dlgDonut.getDonut());
 					frame.repaint();
 				}
 		}else if (shape instanceof Circle) {
@@ -181,7 +217,12 @@ public class DrawingController {
 			dlgCircle.setVisible(true);
 			
 			if(dlgCircle.getCircle() != null) {
-				model.setShape(index, dlgCircle.getCircle());
+				
+				Circle newC = dlgCircle.getCircle();
+				Circle oldC = (Circle) model.getShapeList().get(model.getSelected());
+				updateCircleCmd = new UpdateCircleCmd(oldC, newC, model);
+				updateCircleCmd.execute();
+				//model.setShape(index, dlgCircle.getCircle());
 				frame.repaint();
 			    }
 		    } 
@@ -189,7 +230,23 @@ public class DrawingController {
 	
 		public void actionPerformedDelete() {
 			if (model.isEmpty()) return;
-			if (JOptionPane.showConfirmDialog(null, "Do you really want to delete shape?", "Delete", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == 0) model.removeSelected();
+			int index = model.getSelected();
+			
+			if (index == -1) {
+		        JOptionPane.showMessageDialog(frame, "Please select a shape to delete.");
+		        return;
+		    }
+			
+			if (JOptionPane.showConfirmDialog(null, "Do you really want to delete shape?", "Delete", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == 0){
+				
+				Shape shape = model.getShape(index);
+				
+				removeShapeCmd = new RemoveShapeCmd(shape,model);
+				
+				removeShapeCmd.execute();
+				//model.removeSelected();
+			}
+			
 			frame.repaint();
 		}
 

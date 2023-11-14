@@ -17,7 +17,8 @@ public class RemoveShapeCmd implements Command {
 	
 	@Override
 	public void execute() {
-		model.removeShape(shape);
+		model.removeSelected();
+		model.addToUndoList(this);
 	}
 
 	@Override
@@ -25,4 +26,9 @@ public class RemoveShapeCmd implements Command {
 		model.addShape(shape);
 	}
 
+
+	@Override
+	public String getCmdName() {
+		return " RemoveShapeCmd";
+	}
 }

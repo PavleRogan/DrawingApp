@@ -17,11 +17,18 @@ public class AddShapeCmd implements Command {
 	@Override
 	public void execute() {
 		model.addShape(shape);
+		model.addToUndoList(this);
+		
 	}
 
 	@Override
 	public void unexecute() {
 		model.removeShape(shape);
+	}
+	
+	@Override
+	public String getCmdName() {
+		return " AddShapeCmd";
 	}
 
 }

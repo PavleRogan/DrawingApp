@@ -186,6 +186,11 @@ public class DlgLine extends JDialog {
 		this.color = color;
 		
 	}
+	
+
+	public Color getColor() {
+		return color;
+	}
 
 	public Line getLine() {
 		return line;

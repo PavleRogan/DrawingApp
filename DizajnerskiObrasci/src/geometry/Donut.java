@@ -2,6 +2,9 @@ package geometry;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.geom.Area;
+import java.awt.geom.Ellipse2D;
+import java.awt.Graphics2D;
 
 public class Donut extends Circle {
 	
@@ -41,11 +44,20 @@ public class Donut extends Circle {
 	
 	@Override
 	public void fill(Graphics g) {
-		g.setColor(getInnerColor());
-		super.fill(g);
-		g.setColor(Color.WHITE);
-		g.fillOval(this.getCenter().getX()-this.innerRadius+1, this.getCenter().getY()-this.innerRadius+1, this.innerRadius*2-2, this.innerRadius*2-2);
+	//  g.setColor(getInnerColor());
+	//	super.fill(g);
+	//	g.setColor(Color.WHITE);
+	//	g.fillOval(this.getCenter().getX()-this.innerRadius+1, this.getCenter().getY()-this.innerRadius+1, this.innerRadius*2-2, this.innerRadius*2-2);
 		
+		Ellipse2D inner = new Ellipse2D.Float(center.getX() - innerRadius, center.getY() - innerRadius, 2 * innerRadius, 2 * innerRadius);
+		Ellipse2D outer = new Ellipse2D.Float(center.getX() - getRadius(), center.getY() - getRadius(), 2 * getRadius(), 2 * getRadius());
+		
+		Area outer2 = new Area(outer);
+		Area inner2 = new Area(inner);
+		
+		outer2.subtract(inner2);
+		g.setColor(getInnerColor());
+		((Graphics2D)g).fill (outer2);
 	}
 
 	@Override
@@ -93,6 +105,21 @@ public class Donut extends Circle {
 	
 	public String toString() {
 		return super.toString() + "Inner Radius=" + innerRadius;
+	}
+	
+	public Donut deepCopy(Donut donut) {
+		donut.getCenter().setX(this.getCenter().getX());
+		donut.getCenter().setY(this.getCenter().getY());
+		try {
+			donut.setRadius(this.getRadius());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		donut.setInnerRadius(this.getInnerRadius());
+		donut.setInnerColor(this.getInnerColor());
+		donut.setColor(this.getColor());
+		return donut;
 	}
 
 }

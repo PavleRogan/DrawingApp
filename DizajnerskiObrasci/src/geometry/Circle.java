@@ -5,7 +5,7 @@ import java.awt.Graphics;
 
 public class Circle extends SurfaceShape {
 	
-	private Point center;
+	protected Point center = new Point();
 	private int radius;
 	
 	public Circle() {
@@ -126,6 +126,21 @@ public class Circle extends SurfaceShape {
 	public void moveTo(int x, int y) {
 		this.center.moveTo(x, y);
 		
+	}
+	
+
+	public Circle deepCopy(Circle circle) {
+		
+		circle.getCenter().setX(this.getCenter().getX());
+		circle.getCenter().setY(this.getCenter().getY());
+		try {
+			circle.setRadius(this.getRadius());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		circle.setColor(this.getColor());
+		circle.setInnerColor(this.getInnerColor());
+		return circle;
 	}
 
 	

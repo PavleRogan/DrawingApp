@@ -8,6 +8,7 @@ public class UpdatePointCmd implements Command {
 	private Point oldState;
 	private Point newState;
 	private Point original = new Point();
+	private DrawingModel model;
 	
 	public UpdatePointCmd(Point oldState) {
 		super();
@@ -21,9 +22,21 @@ public class UpdatePointCmd implements Command {
 		this.original = new Point();
 	}
 	
+	public UpdatePointCmd(Point oldState, Point newState, DrawingModel model) {
+		super();
+		this.oldState = oldState;
+		this.newState = newState;
+		this.original = new Point();
+		this.model = model;
+	}
+	
+	
 	
 	@Override
 	public void execute() {
+		
+		
+		
 		original.setX(oldState.getX());
 		original.setY(oldState.getY());
 		original.setColor(oldState.getColor());
@@ -32,6 +45,7 @@ public class UpdatePointCmd implements Command {
 		oldState.setY(newState.getY());
 		oldState.setColor(newState.getColor());
 		
+		model.addToUndoList(this);
 		
 		
 	}
@@ -44,4 +58,9 @@ public class UpdatePointCmd implements Command {
 		
 	}
 
+
+	@Override
+	public String getCmdName() {
+		return " UpdatePointCmd";
+	}
 }

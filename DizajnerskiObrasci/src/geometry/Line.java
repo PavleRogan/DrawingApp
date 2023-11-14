@@ -5,8 +5,8 @@ import java.awt.Graphics;
 
 public class Line extends Shape {
 	
-	private Point startPoint;
-	private Point endPoint;
+	private Point startPoint = new Point();
+	private Point endPoint = new Point();
 	
 	public Line() {
 		
