@@ -7,7 +7,9 @@ import java.awt.event.MouseEvent;
 import javax.swing.JOptionPane;
 
 import command.AddShapeCmd;
+import command.RedoShapeCmd;
 import command.RemoveShapeCmd;
+import command.UndoShapeCmd;
 import command.UpdateCircleCmd;
 import command.UpdateDonutCmd;
 import command.UpdateLineCmd;
@@ -42,6 +44,8 @@ public class DrawingController {
 	private UpdateRectCmd updateRectCmd;
 	private UpdateCircleCmd updateCircleCmd;
 	private UpdateDonutCmd updateDonutCmd;
+	private UndoShapeCmd undoShapeCmd;
+	private RedoShapeCmd redoShapeCmd;
 	
 	
 	public DrawingController(DrawingFrame frame, DrawingModel model) {
@@ -255,13 +259,22 @@ public class DrawingController {
 				JOptionPane.showMessageDialog(frame, "There are no commands to undo.");
 			} 
 			else {
-
+				
+				undoShapeCmd = new UndoShapeCmd(model);
+				undoShapeCmd.execute();
+				frame.repaint();
+					
 			}
 		}
 
 		public void actionPerformedRedo(ActionEvent e) {
-			// TODO Auto-generated method stub
-			
+			if(model.getRedoList().size()==0) {
+				JOptionPane.showMessageDialog(frame, "There are no commands to redo.");
+			} else {
+				redoShapeCmd = new RedoShapeCmd(model);
+				redoShapeCmd.execute();
+				frame.repaint();
+			}
 		}
 	}
 	

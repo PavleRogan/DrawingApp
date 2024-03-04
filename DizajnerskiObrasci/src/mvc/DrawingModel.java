@@ -90,5 +90,26 @@ public class DrawingModel {
 			undoList.add(cmd);
 		}
 	}
+	
+	public void deleteFromUndoList (int index) {
+		undoList.remove(index);
+	}
+	
+	public void deleteFromUndoList (Command cmd) {
+		System.out.println("Delete from undoList "+cmd.getCmdName());
+		undoList.remove(cmd);
+	}
+	
+	public void addToRedoList (Command cmd) {
+		System.out.println("Add to redoList " + cmd.getCmdName());
+		if(!redoList.contains(cmd)) {
+			redoList.add(cmd);
+		}
+	}
+	
+	public void deleteFromRedoList (Command cmd) {
+		System.out.println("delete from redo "+ cmd.getCmdName());
+		redoList.remove(cmd);
+	}
 
 }
