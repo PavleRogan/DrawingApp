@@ -2,8 +2,9 @@ package geometry;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.io.Serializable;
 
-public class Circle extends SurfaceShape {
+public class Circle extends SurfaceShape implements Cloneable, Serializable{
 	
 	protected Point center = new Point();
 	private int radius;

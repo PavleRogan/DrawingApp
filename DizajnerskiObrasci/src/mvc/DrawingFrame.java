@@ -44,6 +44,8 @@ public class DrawingFrame extends JFrame {
 	public JToggleButton tglbtnCircle = new JToggleButton("Circle");
 	public JToggleButton tglbtnRectangle = new JToggleButton("Rectangle");
 	public JToggleButton tglbtnDonut = new JToggleButton("Donut");
+	public JToggleButton tglbtnHexagon = new JToggleButton("Hexagon");
+
 	public JToggleButton tglbtnDraw = new JToggleButton("Draw");
 	public JToggleButton tglbtnMorD = new JToggleButton("M/D");
 	private ButtonGroup btnsShapes = new ButtonGroup();
@@ -87,6 +89,7 @@ public class DrawingFrame extends JFrame {
 		btnsShapes.add(tglbtnCircle);
 		btnsShapes.add(tglbtnRectangle);
 		btnsShapes.add(tglbtnDonut);
+		btnsShapes.add(tglbtnHexagon);
 		
 		
 		btnUndo.addActionListener(new ActionListener() {
@@ -101,6 +104,8 @@ public class DrawingFrame extends JFrame {
 			}
 		});
 		
+		
+		
 		GroupLayout gl_panel = new GroupLayout(panel);
 		gl_panel.setHorizontalGroup(
 			gl_panel.createParallelGroup(Alignment.LEADING)
@@ -113,11 +118,12 @@ public class DrawingFrame extends JFrame {
 						.addComponent(tglbtnLine, GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE)
 						.addComponent(tglbtnPoint, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE)
 						.addComponent(tglbtnDraw, GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE)
-						.addComponent(tglbtnMorD, GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE)
-						.addComponent(btnModify, GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE)
-						.addComponent(btnDelete, GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE)
 						.addComponent(btnUndo, GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE)
-						.addComponent(btnRedo, GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE))
+						.addComponent(btnRedo, GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE)
+						.addComponent(btnDelete, GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE)
+						.addComponent(btnModify, GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE)
+						.addComponent(tglbtnMorD, GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE)
+						.addComponent(tglbtnHexagon, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE))
 					.addContainerGap())
 		);
 		gl_panel.setVerticalGroup(
@@ -134,13 +140,15 @@ public class DrawingFrame extends JFrame {
 					.addComponent(tglbtnRectangle)
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(tglbtnDonut)
-					.addGap(35)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(tglbtnHexagon)
+					.addGap(16)
 					.addComponent(tglbtnMorD)
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(btnModify)
-					.addPreferredGap(ComponentPlacement.RELATED)
+					.addPreferredGap(ComponentPlacement.UNRELATED)
 					.addComponent(btnDelete)
-					.addGap(52)
+					.addGap(40)
 					.addComponent(btnUndo)
 					.addPreferredGap(ComponentPlacement.UNRELATED)
 					.addComponent(btnRedo)
@@ -152,7 +160,9 @@ public class DrawingFrame extends JFrame {
 		tglbtnLine.setEnabled(true);
 		tglbtnRectangle.setEnabled(true);
 		tglbtnCircle.setEnabled(true);
-		tglbtnDonut.setEnabled(true);	
+		tglbtnDonut.setEnabled(true);
+		tglbtnHexagon.setEnabled(true);	
+
 		
 		tglbtnDraw.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {

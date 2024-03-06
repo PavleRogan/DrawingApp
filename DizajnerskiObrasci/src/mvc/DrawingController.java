@@ -6,17 +6,20 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.JOptionPane;
 
+import adapter.HexagonAdapter;
 import command.AddShapeCmd;
 import command.RedoShapeCmd;
 import command.RemoveShapeCmd;
 import command.UndoShapeCmd;
 import command.UpdateCircleCmd;
 import command.UpdateDonutCmd;
+import command.UpdateHexagonCmd;
 import command.UpdateLineCmd;
 import command.UpdatePointCmd;
 import command.UpdateRectCmd;
 import drawing.DlgCircle;
 import drawing.DlgDonut;
+import drawing.DlgHexagon;
 import drawing.DlgLine;
 import drawing.DlgPoint;
 import drawing.DlgRectangle;
@@ -43,6 +46,7 @@ public class DrawingController {
 	private UpdateLineCmd updateLineCmd;
 	private UpdateRectCmd updateRectCmd;
 	private UpdateCircleCmd updateCircleCmd;
+	private UpdateHexagonCmd updateHexagonCmd;
 	private UpdateDonutCmd updateDonutCmd;
 	private UndoShapeCmd undoShapeCmd;
 	private RedoShapeCmd redoShapeCmd;
@@ -119,6 +123,21 @@ public class DrawingController {
 			frame.repaint();
 			return;	
 			
+		} else if (frame.tglbtnHexagon.isSelected()) {
+			DlgHexagon dlgHexagon = new DlgHexagon();
+			dlgHexagon.setPoint(mouseClick);
+			dlgHexagon.setColors(frame.color, frame.innerColor);
+			dlgHexagon.setVisible(true);
+			
+			if(dlgHexagon.getHexagonAdapter() != null) {
+				
+				
+				addActionToUndo(dlgHexagon.getHexagonAdapter());
+				
+				
+			}
+			frame.repaint();
+			return;
 		}
 		
 		
@@ -141,6 +160,7 @@ public class DrawingController {
 		frame.tglbtnRectangle.setEnabled(true);
 		frame.tglbtnCircle.setEnabled(true);
 		frame.tglbtnDonut.setEnabled(true);	
+		frame.tglbtnHexagon.setEnabled(true);	
 		
 	}
 	
@@ -153,6 +173,7 @@ public class DrawingController {
 		frame.tglbtnRectangle.setEnabled(false);
 		frame.tglbtnCircle.setEnabled(false);
 		frame.tglbtnDonut.setEnabled(false);
+		frame.tglbtnHexagon.setEnabled(false);
 	}
 	
 	public void actionPerformedModify() {
@@ -229,7 +250,23 @@ public class DrawingController {
 				//model.setShape(index, dlgCircle.getCircle());
 				frame.repaint();
 			    }
-		    } 
+		    } else if (shape instanceof HexagonAdapter) {
+		    	
+		    	
+				DlgHexagon dlgHexagon = new DlgHexagon();
+				dlgHexagon.setHexagonAdapter((HexagonAdapter)shape);
+				dlgHexagon.setVisible(true);
+				
+				if(dlgHexagon.getHexagonAdapter() != null) {
+					int hexIndex = model.getSelected();
+					
+					HexagonAdapter newHexagon = dlgHexagon.getHexagonAdapter();
+					HexagonAdapter oldHexagon = (HexagonAdapter) model.getShapeList().get(hexIndex);
+					updateHexagonCmd = new UpdateHexagonCmd(oldHexagon, newHexagon, model);
+					updateHexagonCmd.execute();
+					frame.repaint();
+				}
+			} 
 		}
 	
 		public void actionPerformedDelete() {
@@ -248,7 +285,7 @@ public class DrawingController {
 				removeShapeCmd = new RemoveShapeCmd(shape,model);
 				
 				removeShapeCmd.execute();
-				//model.removeSelected();
+				
 			}
 			
 			frame.repaint();
