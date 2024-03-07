@@ -43,17 +43,7 @@ public class HexagonAdapter extends SurfaceShape {
 	}
 	
 	
-	@Override
-	public void moveBy(int byX, int byY) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void moveTo(int x, int y) {
-		// TODO Auto-generated method stub
-		
-	}
+	
 
 	@Override
 	public int compareTo(Object o) {
@@ -130,14 +120,26 @@ public class HexagonAdapter extends SurfaceShape {
 	}
 	
 	@Override
+	public void moveBy(int byX, int byY) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void moveTo(int x, int y) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
 	public void fill(Graphics g) {
 		g.setColor(getInnerColor());
 	}
 	
 	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof HexagonAdapter) {
-			Hexagon hexaFromObj = ((HexagonAdapter) obj).getHexagon();
+	public boolean equals(Object o) {
+		if (o instanceof HexagonAdapter) {
+			Hexagon hexaFromObj = ((HexagonAdapter) o).getHexagon();
 			return hexagon.getX() == hexaFromObj.getX() && hexagon.getY() == hexaFromObj.getY()
 					&& hexagon.getR() == hexaFromObj.getR();
 		}
@@ -145,7 +147,8 @@ public class HexagonAdapter extends SurfaceShape {
 	}
 	
 	public String toString() {
-		return "X=" + hexagon.getX() +"Y="+ hexagon.getY() + "R=" + hexagon.getR();
+		return "Center: "+(new Point(hexagon.getX(),hexagon.getY()))+" Radius= "+hexagon.getR()  + " color= " + hexagon.getBorderColor().getRGB() + " innerColor= " +hexagon.getAreaColor().getRGB() ;
+
 	}
 	
 	

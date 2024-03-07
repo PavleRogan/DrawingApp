@@ -29,6 +29,8 @@ import geometry.Line;
 import geometry.Point;
 import geometry.Rectangle;
 import geometry.Shape;
+import observer.SelectedShapes;
+import observer.SelectedShapesObserver;
 
 public class DrawingController {
 	
@@ -51,11 +53,17 @@ public class DrawingController {
 	private UndoShapeCmd undoShapeCmd;
 	private RedoShapeCmd redoShapeCmd;
 	
+	private SelectedShapes selectedShapes;
+	private SelectedShapesObserver selectedShapesObserver;
+	
 	
 	public DrawingController(DrawingFrame frame, DrawingModel model) {
 		super();
 		this.frame = frame;
 		this.model = model;
+		this.selectedShapes = new SelectedShapes();
+		this.selectedShapesObserver = new SelectedShapesObserver(frame);
+		this.selectedShapes.addObserver(selectedShapesObserver);
 	}
 
 	public void mouseClicked(MouseEvent e) {
