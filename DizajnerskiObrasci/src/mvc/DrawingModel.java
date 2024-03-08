@@ -100,6 +100,18 @@ public class DrawingModel {
 		undoList.remove(cmd);
 	}
 	
+	public int getNumberOfSelectedShapes() {
+		int numberOfSelectedShapes = 0;
+		for (i=0; i<shapeList.size(); i++) {
+			
+			if (shapeList.get(i).isSelected()) {
+				numberOfSelectedShapes += 1;
+			}
+			
+		}
+		return numberOfSelectedShapes;
+	}
+	
 	public void addToRedoList (Command cmd) {
 		System.out.println("Add to redoList " + cmd.getCmdName());
 		if(!redoList.contains(cmd)) {

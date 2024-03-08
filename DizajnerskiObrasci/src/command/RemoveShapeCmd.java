@@ -10,6 +10,7 @@ public class RemoveShapeCmd implements Command {
 	private DrawingModel model;
 	
 	public RemoveShapeCmd(Shape shape,DrawingModel model) {
+		super();
 		this.shape = shape;
 		this.model = model;
 	}

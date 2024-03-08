@@ -19,6 +19,7 @@ public class UndoShapeCmd implements Command {
 			model.deleteFromUndoList(command);
 			model.addToRedoList(command);
 			command.unexecute();
+			model.deselect();
 		}
 	}
 
@@ -31,7 +32,7 @@ public class UndoShapeCmd implements Command {
 	@Override
 	public String getCmdName() {
 		// TODO Auto-generated method stub
-		return "UndoShapeCmd";
+		return " UndoShapeCmd";
 	}
 
 }

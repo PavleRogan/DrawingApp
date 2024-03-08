@@ -51,6 +51,26 @@ public class DrawingFrame extends JFrame {
 	private ButtonGroup btnsShapes = new ButtonGroup();
 	private ButtonGroup btnsOperation = new ButtonGroup();
 	public final JButton btnModify = new JButton("Modify");
+	
+	public JToggleButton getTglbtnDraw() {
+		return tglbtnDraw;
+	}
+
+
+	public void setTglbtnDraw(JToggleButton tglbtnDraw) {
+		this.tglbtnDraw = tglbtnDraw;
+	}
+
+
+	public JButton getBtnModify() {
+		return btnModify;
+	}
+
+
+	public JButton getBtnDelete() {
+		return btnDelete;
+	}
+
 	public final JButton btnDelete = new JButton("Delete");
 	
 	public JButton btnUndo = new JButton("UNDO");

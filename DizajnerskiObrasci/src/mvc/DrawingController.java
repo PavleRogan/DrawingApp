@@ -69,10 +69,15 @@ public class DrawingController {
 	public void mouseClicked(MouseEvent e) {
 		
 		Point mouseClick = new Point(e.getX(), e.getY());
-		model.deselect();
+		
+		//model.deselect();
 		
 		if (activeOperation == operationMorD) {
+			
 			model.select(mouseClick);
+			
+			this.selectedShapes.setNumOfSelectedShapes(model.getNumberOfSelectedShapes());
+			
 			frame.repaint();
 			return;
 		}
@@ -174,8 +179,8 @@ public class DrawingController {
 	
 	public void setMorD() {
 		activeOperation = operationMorD;
-		frame.btnModify.setEnabled(true);
-		frame.btnDelete.setEnabled(true);
+		frame.btnModify.setEnabled(false);
+		frame.btnDelete.setEnabled(false);
 		frame.tglbtnPoint.setEnabled(false);
 		frame.tglbtnLine.setEnabled(false);
 		frame.tglbtnRectangle.setEnabled(false);
@@ -307,7 +312,9 @@ public class DrawingController {
 				
 				undoShapeCmd = new UndoShapeCmd(model);
 				undoShapeCmd.execute();
+				
 				frame.repaint();
+				
 					
 			}
 		}
