@@ -3,12 +3,14 @@ package mvc;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 
 import adapter.HexagonAdapter;
 import command.AddShapeCmd;
 import command.RedoShapeCmd;
+import command.RemoveMultipleCmd;
 import command.RemoveShapeCmd;
 import command.UndoShapeCmd;
 import command.UpdateCircleCmd;
@@ -25,6 +27,7 @@ import drawing.DlgPoint;
 import drawing.DlgRectangle;
 import geometry.Circle;
 import geometry.Donut;
+import geometry.IndexedShapeHelper;
 import geometry.Line;
 import geometry.Point;
 import geometry.Rectangle;
@@ -52,6 +55,7 @@ public class DrawingController {
 	private UpdateDonutCmd updateDonutCmd;
 	private UndoShapeCmd undoShapeCmd;
 	private RedoShapeCmd redoShapeCmd;
+	private RemoveMultipleCmd removeMultipleCmd;
 	
 	private SelectedShapes selectedShapes;
 	private SelectedShapesObserver selectedShapesObserver;
@@ -293,16 +297,25 @@ public class DrawingController {
 			
 			if (JOptionPane.showConfirmDialog(null, "Do you really want to delete shape?", "Delete", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == 0){
 				
-				Shape shape = model.getShape(index);
-				
-				removeShapeCmd = new RemoveShapeCmd(shape,model);
-				
-				removeShapeCmd.execute();
-				
+				ArrayList<Integer> selectedIndexes = model.getSelectedIndexes();
+		        ArrayList<IndexedShapeHelper> helperList = new ArrayList<>();
+		        
+		        for (int i = selectedIndexes.size() - 1; i >= 0; i--) {
+		        	
+		            Shape selectedShape = model.getShapeList().get(selectedIndexes.get(i));
+		            IndexedShapeHelper helper = new IndexedShapeHelper(selectedShape, i);
+		            helperList.add(helper);
+		            
+		        }
+		        removeMultipleCmd = new RemoveMultipleCmd(helperList, model);
+		        removeMultipleCmd.execute();        
+		        this.selectedShapes.setNumOfSelectedShapes(model.getNumberOfSelectedShapes());
+		        frame.repaint();
 			}
-			
 			frame.repaint();
 		}
+	
+	
 
 		public void actionPerformedUndo(ActionEvent e) {
 			if(model.getUndoList().size()==0) {

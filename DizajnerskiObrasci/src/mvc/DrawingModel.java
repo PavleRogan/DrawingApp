@@ -120,8 +120,28 @@ public class DrawingModel {
 	}
 	
 	public void deleteFromRedoList (Command cmd) {
-		System.out.println("delete from redo "+ cmd.getCmdName());
+		System.out.println("Delete from redoList "+ cmd.getCmdName());
 		redoList.remove(cmd);
 	}
 
+	public ArrayList<Integer> getSelectedIndexes() {
+		// TODO Auto-generated method stub
+		
+		ArrayList<Integer> selectedIndexes = new ArrayList<>();
+		for(int i=0; i<shapeList.size(); i++) {
+			
+			if(shapeList.get(i).isSelected()) {
+				selectedIndexes.add(i);
+			}
+			
+		}
+		return selectedIndexes;
+	}
+
+	public void addShapeToIndex(int index, Shape shape) {
+		// TODO Auto-generated method stub
+		shapeList.add(index, shape);
+	}
+
+	
 }
