@@ -44,14 +44,12 @@ public class RemoveMultipleCmd implements Command {
 		// TODO Auto-generated method stub
 		
 		for (IndexedShapeHelper shape : hlprShapes) {
-            //model.removeShape(shape.getShape());
-			removeShapeCmd = new RemoveShapeCmd(shape.getShape(),model);
-			removeShapeCmd.execute();
+            model.removeShape(shape.getShape());
+			//removeShapeCmd = new RemoveShapeCmd(shape.getShape(),model);
+			//removeShapeCmd.execute();
         }
         //model.getUndoList().add(this);
-		
-		
-        
+		model.addToUndoList(this);
 
 	}
 

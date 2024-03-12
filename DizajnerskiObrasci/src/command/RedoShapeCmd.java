@@ -20,7 +20,6 @@ public class RedoShapeCmd implements Command {
 			model.deleteFromRedoList(cmd);
 			model.addToUndoList(cmd);
 			cmd.execute();
-			model.deselect();
 		}
 	}
 

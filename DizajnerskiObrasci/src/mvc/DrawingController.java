@@ -9,9 +9,12 @@ import javax.swing.JOptionPane;
 
 import adapter.HexagonAdapter;
 import command.AddShapeCmd;
+import command.DeselectAllCmd;
+import command.DeselectShapeCmd;
 import command.RedoShapeCmd;
 import command.RemoveMultipleCmd;
 import command.RemoveShapeCmd;
+import command.SelectShapeCmd;
 import command.UndoShapeCmd;
 import command.UpdateCircleCmd;
 import command.UpdateDonutCmd;
@@ -56,6 +59,11 @@ public class DrawingController {
 	private UndoShapeCmd undoShapeCmd;
 	private RedoShapeCmd redoShapeCmd;
 	private RemoveMultipleCmd removeMultipleCmd;
+	private DeselectShapeCmd deselectShapeCmd;
+	private SelectShapeCmd selectShapeCmd;
+	private DeselectAllCmd deselectAllCmd;
+
+	
 	
 	private SelectedShapes selectedShapes;
 	private SelectedShapesObserver selectedShapesObserver;
@@ -76,15 +84,50 @@ public class DrawingController {
 		
 		//model.deselect();
 		
+//		if (activeOperation == operationMorD) {
+//			
+//			model.select(mouseClick);
+//			
+//			this.selectedShapes.setNumOfSelectedShapes(model.getNumberOfSelectedShapes());
+//			
+//			frame.repaint();
+//			return;
+//		}
+				
 		if (activeOperation == operationMorD) {
 			
-			model.select(mouseClick);
-			
+			for (int i = model.getShapeList().size()-1; i >= 0; i--) {
+				if (model.getShape(i).contains(mouseClick.getX(), mouseClick.getY()) && model.getShape(i).isSelected() == true  ) {
+					deselectShapeCmd = new DeselectShapeCmd(model.getShape(i),model);
+					deselectShapeCmd.execute();										
+					break;
+				}
+				if (model.getShape(i).contains(mouseClick.getX(), mouseClick.getY()) && model.getShape(i).isSelected() == false  ) {
+					
+					selectShapeCmd = new SelectShapeCmd(model.getShape(i),model);
+					selectShapeCmd.execute();
+					
+				}
+			} if(frame.getView().isOnShape(mouseClick) != true && this.selectedShapes.getNumOfSelectedShapes()>0){
+	          
+				ArrayList<Shape> selectedShapesList= new ArrayList<Shape>();
+	            model.getShapeList().forEach(shape -> {
+	            	if(shape.isSelected())
+	            		selectedShapesList.add(shape);
+	            	
+	            });
+	            
+	            deselectAllCmd = new DeselectAllCmd(selectedShapesList,model);
+	            deselectAllCmd.execute();
+				
+		}
 			this.selectedShapes.setNumOfSelectedShapes(model.getNumberOfSelectedShapes());
 			
 			frame.repaint();
 			return;
-		}
+					
+					
+}
 		
 		if (frame.tglbtnPoint.isSelected()) {
 			DlgPoint dlgPoint = new DlgPoint();
@@ -328,6 +371,7 @@ public class DrawingController {
 				
 				frame.repaint();
 				
+				this.selectedShapes.setNumOfSelectedShapes(model.getNumberOfSelectedShapes());
 					
 			}
 		}
@@ -339,6 +383,8 @@ public class DrawingController {
 				redoShapeCmd = new RedoShapeCmd(model);
 				redoShapeCmd.execute();
 				frame.repaint();
+				
+				this.selectedShapes.setNumOfSelectedShapes(model.getNumberOfSelectedShapes());
 			}
 		}
 	}

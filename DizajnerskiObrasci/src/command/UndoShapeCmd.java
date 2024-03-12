@@ -19,7 +19,7 @@ public class UndoShapeCmd implements Command {
 			model.deleteFromUndoList(command);
 			model.addToRedoList(command);
 			command.unexecute();
-			model.deselect();
+			
 		}
 	}
 
