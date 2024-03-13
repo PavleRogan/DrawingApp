@@ -36,21 +36,22 @@ public class UpdateHexagonCmd implements Command {
 		oldHex = newHex.clone(oldHex);
 		
 		model.addToUndoList(this);
-		if(model.getShapeList().size()>0) {
-			int index = model.getShapeList().indexOf(oldHex);
-			model.setShape(index, newHex);
-		}
+//		if(model.getShapeList().size()>0) {
+//			int index = model.getShapeList().indexOf(oldHex);
+//			model.setShape(index, newHex);
+//		}
 
 	}
 
 	@Override
 	public void unexecute() {
 		// TODO Auto-generated method stub
-		if(model.getShapeList().size()>0) {
-			int index = model.getShapeList().indexOf(newHex);
-			oldHex = originalHex.clone(oldHex);
-			model.setShape(index, oldHex);
-		}
+//		if(model.getShapeList().size()>0) {
+//			int index = model.getShapeList().indexOf(newHex);
+//			oldHex = originalHex.clone(oldHex);
+//			model.setShape(index, oldHex);
+//		}
+		originalHex.clone(oldHex);
 
 	}
 

@@ -106,6 +106,7 @@ public class DrawingController {
 					
 					selectShapeCmd = new SelectShapeCmd(model.getShape(i),model);
 					selectShapeCmd.execute();
+					break;
 					
 				}
 			} if(frame.getView().isOnShape(mouseClick) != true && this.selectedShapes.getNumOfSelectedShapes()>0){
@@ -136,6 +137,7 @@ public class DrawingController {
 			dlgPoint.setVisible(true);
 			if(dlgPoint.getPoint() != null) {			
 				addActionToUndo(dlgPoint.getPoint()); 
+				model.clearRedoList();
 				
 			}
 			
@@ -150,6 +152,7 @@ public class DrawingController {
 				dlgLine.setVisible(true);
 				if(dlgLine.getLine()!= null) {
 					addActionToUndo(dlgLine.getLine());
+					model.clearRedoList();
 				}
 				waitingEndPoint=false;
 				frame.repaint();
@@ -163,7 +166,9 @@ public class DrawingController {
 			dlgCircle.setPoint(mouseClick);
 			dlgCircle.setColors(frame.innerColor, frame.color);
 			dlgCircle.setVisible(true);
-			if(dlgCircle.getCircle() != null) addActionToUndo(dlgCircle.getCircle());
+			if(dlgCircle.getCircle() != null) {
+				addActionToUndo(dlgCircle.getCircle());
+			model.clearRedoList();}
 			frame.repaint();
 			return;
 		}else if(frame.tglbtnRectangle.isSelected()) {
@@ -171,7 +176,10 @@ public class DrawingController {
 			dlgRectangle.setPoint(mouseClick);
 			dlgRectangle.setColors(frame.color, frame.innerColor);
 			dlgRectangle.setVisible(true);
-			if(dlgRectangle.getRectangle() != null) addActionToUndo(dlgRectangle.getRectangle());
+			if(dlgRectangle.getRectangle() != null) { 
+				addActionToUndo(dlgRectangle.getRectangle());
+				model.clearRedoList();	
+			}
 			frame.repaint();
 			return;
 		}else if(frame.tglbtnDonut.isSelected()) {
@@ -179,7 +187,10 @@ public class DrawingController {
 			dlgDonut.setPoint(mouseClick);
 			dlgDonut.setColors(frame.color, frame.innerColor);
 			dlgDonut.setVisible(true);
-			if(dlgDonut.getDonut() != null) addActionToUndo(dlgDonut.getDonut());
+			if(dlgDonut.getDonut() != null) { 
+				addActionToUndo(dlgDonut.getDonut());
+				model.clearRedoList();
+			}
 			frame.repaint();
 			return;	
 			
@@ -193,8 +204,8 @@ public class DrawingController {
 				
 				
 				addActionToUndo(dlgHexagon.getHexagonAdapter());
-				
-				
+				model.clearRedoList();
+
 			}
 			frame.repaint();
 			return;
@@ -251,7 +262,7 @@ public class DrawingController {
 				Point oldPoint = (Point) model.getShapeList().get(index);
 				updatePointCmd = new UpdatePointCmd(oldPoint, newPoint, model);
 				updatePointCmd.execute();
-				
+				model.clearRedoList();
 				//model.setShape(index, dlgPoint.getPoint());
 				frame.repaint();
 			}
@@ -266,6 +277,7 @@ public class DrawingController {
 				updateLineCmd = new UpdateLineCmd(oldState, newState, model);
 				updateLineCmd.execute();
 				//model.setShape(index, dlgLine.getLine());
+				model.clearRedoList();
 				frame.repaint();
 			}
 		}else if (shape instanceof Rectangle) {
@@ -280,6 +292,7 @@ public class DrawingController {
 				updateRectCmd = new UpdateRectCmd(oldS, newS, model);
 				updateRectCmd.execute();
 				//model.setShape(index, dlgRectangle.getRectangle());
+				model.clearRedoList();
 				frame.repaint();
 			}
 		}else if (shape instanceof Donut) {
@@ -294,6 +307,7 @@ public class DrawingController {
 					updateDonutCmd = new UpdateDonutCmd(oldD, newD, model);
 					updateDonutCmd.execute();
 					//model.setShape(index, dlgDonut.getDonut());
+					model.clearRedoList();
 					frame.repaint();
 				}
 		}else if (shape instanceof Circle) {
@@ -308,6 +322,7 @@ public class DrawingController {
 				updateCircleCmd = new UpdateCircleCmd(oldC, newC, model);
 				updateCircleCmd.execute();
 				//model.setShape(index, dlgCircle.getCircle());
+				model.clearRedoList();
 				frame.repaint();
 			    }
 		    } else if (shape instanceof HexagonAdapter) {
@@ -318,12 +333,11 @@ public class DrawingController {
 				dlgHexagon.setVisible(true);
 				
 				if(dlgHexagon.getHexagonAdapter() != null) {
-					int hexIndex = model.getSelected();
-					
 					HexagonAdapter newHexagon = dlgHexagon.getHexagonAdapter();
-					HexagonAdapter oldHexagon = (HexagonAdapter) model.getShapeList().get(hexIndex);
+					HexagonAdapter oldHexagon = (HexagonAdapter) model.getShapeList().get( model.getSelected());
 					updateHexagonCmd = new UpdateHexagonCmd(oldHexagon, newHexagon, model);
 					updateHexagonCmd.execute();
+					model.clearRedoList();
 					frame.repaint();
 				}
 			} 

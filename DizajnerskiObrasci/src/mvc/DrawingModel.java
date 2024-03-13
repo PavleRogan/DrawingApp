@@ -68,6 +68,8 @@ public class DrawingModel {
 		
 	}
 	
+	
+	
 	public boolean isEmpty() {
 		return shapeList.isEmpty();
 	}
@@ -142,6 +144,11 @@ public class DrawingModel {
 		// TODO Auto-generated method stub
 		shapeList.add(index, shape);
 	}
+	
+	public void clearRedoList() {
+		this.redoList.clear();
+	}
+	
 
 	
 }
