@@ -30,6 +30,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.JLabel;
+import javax.swing.SwingConstants;
 
 public class DrawingFrame extends JFrame {
 		
@@ -51,7 +53,40 @@ public class DrawingFrame extends JFrame {
 	private ButtonGroup btnsShapes = new ButtonGroup();
 	private ButtonGroup btnsOperation = new ButtonGroup();
 	public final JButton btnModify = new JButton("Modify");
+	private JButton btnBorderColor = new JButton("BORDER");
+	private JButton btnInnerColor = new JButton("INNER");
+
+	public final JButton btnDelete = new JButton("Delete");
 	
+	public JButton btnUndo = new JButton("UNDO");
+	public  JButton btnRedo = new JButton("REDO");
+
+	//public Color innerColor = Color.WHITE;
+	//public  Color color = Color.BLACK;
+	boolean waitingEndPoint = false;
+	public Point startPoint;
+	
+	
+	public JButton getBtnColor() {
+		return btnBorderColor;
+	}
+
+
+	public void setBtnColor(JButton btnColor) {
+		this.btnBorderColor = btnColor;
+	}
+
+
+	public JButton getBtnInnerColor() {
+		return btnInnerColor;
+	}
+
+
+	public void setBtnInnerColor(JButton btnInnerColor) {
+		this.btnInnerColor = btnInnerColor;
+	}
+
+
 	public JToggleButton getTglbtnDraw() {
 		return tglbtnDraw;
 	}
@@ -71,15 +106,6 @@ public class DrawingFrame extends JFrame {
 		return btnDelete;
 	}
 
-	public final JButton btnDelete = new JButton("Delete");
-	
-	public JButton btnUndo = new JButton("UNDO");
-	public  JButton btnRedo = new JButton("REDO");
-
-	public Color innerColor = Color.WHITE;
-	public  Color color = Color.BLACK;
-	boolean waitingEndPoint = false;
-	private Point startPoint;
 		
 
 	public DrawingFrame() {
@@ -124,6 +150,10 @@ public class DrawingFrame extends JFrame {
 			}
 		});
 		
+		JLabel lblColors = new JLabel("Colors:");
+		lblColors.setHorizontalAlignment(SwingConstants.CENTER);
+		
+		
 		
 		
 		GroupLayout gl_panel = new GroupLayout(panel);
@@ -132,18 +162,21 @@ public class DrawingFrame extends JFrame {
 				.addGroup(gl_panel.createSequentialGroup()
 					.addContainerGap()
 					.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
-						.addComponent(tglbtnDonut, GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE)
-						.addComponent(tglbtnRectangle, GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE)
-						.addComponent(tglbtnCircle, GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE)
-						.addComponent(tglbtnLine, GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE)
-						.addComponent(tglbtnPoint, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE)
-						.addComponent(tglbtnDraw, GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE)
-						.addComponent(btnUndo, GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE)
-						.addComponent(btnRedo, GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE)
-						.addComponent(btnDelete, GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE)
-						.addComponent(btnModify, GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE)
-						.addComponent(tglbtnMorD, GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE)
-						.addComponent(tglbtnHexagon, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE))
+						.addComponent(lblColors, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
+						.addComponent(tglbtnDonut, GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
+						.addComponent(tglbtnRectangle, GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
+						.addComponent(tglbtnCircle, GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
+						.addComponent(tglbtnLine, GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
+						.addComponent(tglbtnPoint, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
+						.addComponent(tglbtnDraw, GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
+						.addComponent(btnUndo, GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
+						.addComponent(btnRedo, GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
+						.addComponent(btnDelete, GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
+						.addComponent(btnModify, GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
+						.addComponent(tglbtnMorD, GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
+						.addComponent(tglbtnHexagon, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
+						.addComponent(btnInnerColor, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
+						.addComponent(btnBorderColor, GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE))
 					.addContainerGap())
 		);
 		gl_panel.setVerticalGroup(
@@ -172,7 +205,13 @@ public class DrawingFrame extends JFrame {
 					.addComponent(btnUndo)
 					.addPreferredGap(ComponentPlacement.UNRELATED)
 					.addComponent(btnRedo)
-					.addContainerGap(298, Short.MAX_VALUE))
+					.addGap(19)
+					.addComponent(lblColors)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(btnBorderColor)
+					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addComponent(btnInnerColor)
+					.addContainerGap(208, Short.MAX_VALUE))
 		);
 		btnModify.setEnabled(false);
 		btnDelete.setEnabled(false);
@@ -198,6 +237,21 @@ public class DrawingFrame extends JFrame {
 		btnDelete.addActionListener(btnDeleteClickListener());
 		tglbtnDraw.setSelected(true);
 		
+		
+
+		btnBorderColor.setBackground(Color.BLACK);
+		btnBorderColor.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				controller.chooseBorderColor();
+			}
+		});
+		
+		btnInnerColor.setBackground(Color.WHITE);
+		btnInnerColor.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				controller.chooseInnerColor();
+			}
+		});
 		
 		
 		panel.setLayout(gl_panel);

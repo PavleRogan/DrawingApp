@@ -133,6 +133,8 @@ public class DlgDonut extends JDialog {
 						.addComponent(btnInnerColor))
 					.addContainerGap(33, Short.MAX_VALUE))
 		);
+		
+		
 		contentPanel.setLayout(gl_contentPanel);
 		{
 			JPanel buttonPane = new JPanel();
@@ -174,6 +176,22 @@ public class DlgDonut extends JDialog {
 				buttonPane.add(cancelButton);
 			}
 		}
+	}
+
+	public Color getColor() {
+		return color;
+	}
+
+	public void setColor(Color color) {
+		this.color = color;
+	}
+
+	public Color getInnerColor() {
+		return innerColor;
+	}
+
+	public void setInnerColor(Color innerColor) {
+		this.innerColor = innerColor;
 	}
 
 	public void setPoint(Point point) {

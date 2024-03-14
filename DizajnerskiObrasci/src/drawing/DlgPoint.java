@@ -27,8 +27,12 @@ public class DlgPoint extends JDialog {
 	
 	
 	private Color color = null;
-	private Color innerColor = null;
+	//private Color innerColor = null;
 	private JTextField txtXCoord;
+	public Color getColor() {
+		return color;
+	}
+
 	private JTextField txtYCoord;
 	private Point point = null;
 

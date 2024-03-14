@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
+import javax.swing.JColorChooser;
 import javax.swing.JOptionPane;
 
 import adapter.HexagonAdapter;
@@ -62,6 +63,8 @@ public class DrawingController {
 	private DeselectShapeCmd deselectShapeCmd;
 	private SelectShapeCmd selectShapeCmd;
 	private DeselectAllCmd deselectAllCmd;
+	private Color borderColor = Color.BLACK;
+	private Color innerColor = Color.WHITE;
 
 	
 	
@@ -133,10 +136,15 @@ public class DrawingController {
 		if (frame.tglbtnPoint.isSelected()) {
 			DlgPoint dlgPoint = new DlgPoint();
 			dlgPoint.setPoint(mouseClick);
-			dlgPoint.setColor(frame.color);
+			if(borderColor != null)
+				dlgPoint.setColor(borderColor);
+			
 			dlgPoint.setVisible(true);
 			if(dlgPoint.getPoint() != null) {			
 				addActionToUndo(dlgPoint.getPoint()); 
+				borderColor = dlgPoint.getColor();
+				frame.getBtnColor().setBackground(borderColor);
+				model.clearRedoList();
 				model.clearRedoList();
 				
 			}
@@ -148,10 +156,14 @@ public class DrawingController {
 				Line line = new Line(startPoint,mouseClick);
 				DlgLine dlgLine = new DlgLine();
 				dlgLine.setLine(line);
-				dlgLine.setColor(frame.color);
+				if(borderColor != null)
+					dlgLine.setColor(borderColor);
+				//dlgLine.setColor(frame.color);
 				dlgLine.setVisible(true);
 				if(dlgLine.getLine()!= null) {
 					addActionToUndo(dlgLine.getLine());
+					borderColor = dlgLine.getColor();
+					frame.getBtnColor().setBackground(borderColor);
 					model.clearRedoList();
 				}
 				waitingEndPoint=false;
@@ -164,20 +176,28 @@ public class DrawingController {
 		}else if(frame.tglbtnCircle.isSelected()) {
 			DlgCircle dlgCircle = new DlgCircle();
 			dlgCircle.setPoint(mouseClick);
-			dlgCircle.setColors(frame.innerColor, frame.color);
+			dlgCircle.setColors(innerColor, borderColor);
 			dlgCircle.setVisible(true);
 			if(dlgCircle.getCircle() != null) {
 				addActionToUndo(dlgCircle.getCircle());
+				borderColor = dlgCircle.getColor();
+				innerColor = dlgCircle.getInnerColor();
+				frame.getBtnColor().setBackground(borderColor);
+				frame.getBtnInnerColor().setBackground(innerColor);
 			model.clearRedoList();}
 			frame.repaint();
 			return;
 		}else if(frame.tglbtnRectangle.isSelected()) {
 			DlgRectangle dlgRectangle = new DlgRectangle();
 			dlgRectangle.setPoint(mouseClick);
-			dlgRectangle.setColors(frame.color, frame.innerColor);
+			dlgRectangle.setColors(borderColor, innerColor);
 			dlgRectangle.setVisible(true);
 			if(dlgRectangle.getRectangle() != null) { 
 				addActionToUndo(dlgRectangle.getRectangle());
+				borderColor = dlgRectangle.getColor();
+				innerColor = dlgRectangle.getInnerColor();
+				frame.getBtnColor().setBackground(borderColor);
+				frame.getBtnInnerColor().setBackground(innerColor);
 				model.clearRedoList();	
 			}
 			frame.repaint();
@@ -185,10 +205,14 @@ public class DrawingController {
 		}else if(frame.tglbtnDonut.isSelected()) {
 			DlgDonut dlgDonut = new DlgDonut();
 			dlgDonut.setPoint(mouseClick);
-			dlgDonut.setColors(frame.color, frame.innerColor);
+			dlgDonut.setColors(borderColor,innerColor);
 			dlgDonut.setVisible(true);
 			if(dlgDonut.getDonut() != null) { 
 				addActionToUndo(dlgDonut.getDonut());
+				borderColor = dlgDonut.getColor();
+				innerColor = dlgDonut.getInnerColor();
+				frame.getBtnColor().setBackground(borderColor);
+				frame.getBtnInnerColor().setBackground(innerColor);
 				model.clearRedoList();
 			}
 			frame.repaint();
@@ -197,13 +221,16 @@ public class DrawingController {
 		} else if (frame.tglbtnHexagon.isSelected()) {
 			DlgHexagon dlgHexagon = new DlgHexagon();
 			dlgHexagon.setPoint(mouseClick);
-			dlgHexagon.setColors(frame.color, frame.innerColor);
+			dlgHexagon.setColors(borderColor,innerColor);
 			dlgHexagon.setVisible(true);
 			
 			if(dlgHexagon.getHexagonAdapter() != null) {
 				
-				
 				addActionToUndo(dlgHexagon.getHexagonAdapter());
+				borderColor = dlgHexagon.getColor();
+				innerColor = dlgHexagon.getInnerColor();
+				frame.getBtnColor().setBackground(borderColor);
+				frame.getBtnInnerColor().setBackground(innerColor);
 				model.clearRedoList();
 
 			}
@@ -262,6 +289,8 @@ public class DrawingController {
 				Point oldPoint = (Point) model.getShapeList().get(index);
 				updatePointCmd = new UpdatePointCmd(oldPoint, newPoint, model);
 				updatePointCmd.execute();
+				borderColor = dlgPoint.getColor();
+				frame.getBtnColor().setBackground(borderColor);
 				model.clearRedoList();
 				//model.setShape(index, dlgPoint.getPoint());
 				frame.repaint();
@@ -276,6 +305,8 @@ public class DrawingController {
 				Line newState = dlgLine.getLine();
 				updateLineCmd = new UpdateLineCmd(oldState, newState, model);
 				updateLineCmd.execute();
+				borderColor = dlgLine.getColor();
+				frame.getBtnColor().setBackground(borderColor);
 				//model.setShape(index, dlgLine.getLine());
 				model.clearRedoList();
 				frame.repaint();
@@ -291,6 +322,10 @@ public class DrawingController {
 				Rectangle newS = dlgRectangle.getRectangle();
 				updateRectCmd = new UpdateRectCmd(oldS, newS, model);
 				updateRectCmd.execute();
+				borderColor = dlgRectangle.getColor();
+				innerColor = dlgRectangle.getInnerColor();
+				frame.getBtnColor().setBackground(borderColor);
+				frame.getBtnInnerColor().setBackground(innerColor);
 				//model.setShape(index, dlgRectangle.getRectangle());
 				model.clearRedoList();
 				frame.repaint();
@@ -306,6 +341,10 @@ public class DrawingController {
 					Donut oldD = (Donut) model.getShapeList().get(model.getSelected());
 					updateDonutCmd = new UpdateDonutCmd(oldD, newD, model);
 					updateDonutCmd.execute();
+					borderColor = dlgDonut.getColor();
+					innerColor = dlgDonut.getInnerColor();
+					frame.getBtnColor().setBackground(borderColor);
+					frame.getBtnInnerColor().setBackground(innerColor);
 					//model.setShape(index, dlgDonut.getDonut());
 					model.clearRedoList();
 					frame.repaint();
@@ -321,6 +360,10 @@ public class DrawingController {
 				Circle oldC = (Circle) model.getShapeList().get(model.getSelected());
 				updateCircleCmd = new UpdateCircleCmd(oldC, newC, model);
 				updateCircleCmd.execute();
+				borderColor = dlgCircle.getColor();
+				innerColor = dlgCircle.getInnerColor();
+				frame.getBtnColor().setBackground(borderColor);
+				frame.getBtnInnerColor().setBackground(innerColor);
 				//model.setShape(index, dlgCircle.getCircle());
 				model.clearRedoList();
 				frame.repaint();
@@ -337,6 +380,10 @@ public class DrawingController {
 					HexagonAdapter oldHexagon = (HexagonAdapter) model.getShapeList().get( model.getSelected());
 					updateHexagonCmd = new UpdateHexagonCmd(oldHexagon, newHexagon, model);
 					updateHexagonCmd.execute();
+					borderColor = dlgHexagon.getColor();
+					innerColor = dlgHexagon.getInnerColor();
+					frame.getBtnColor().setBackground(borderColor);
+					frame.getBtnInnerColor().setBackground(innerColor);
 					model.clearRedoList();
 					frame.repaint();
 				}
@@ -401,6 +448,19 @@ public class DrawingController {
 				this.selectedShapes.setNumOfSelectedShapes(model.getNumberOfSelectedShapes());
 			}
 		}
+		
+		public void chooseBorderColor() {
+			borderColor = JColorChooser.showDialog(null, "Choose a color", borderColor);
+			frame.getBtnColor().setBackground(borderColor);
+			
+		}
+		public void chooseInnerColor() {
+			innerColor = JColorChooser.showDialog(null, "Choose a color", innerColor);
+			frame.getBtnInnerColor().setBackground(innerColor);
+			
+		}
+
+		
 	}
 	
 

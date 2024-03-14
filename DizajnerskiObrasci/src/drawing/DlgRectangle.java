@@ -24,6 +24,22 @@ import java.awt.event.ActionEvent;
 
 public class DlgRectangle extends JDialog {
 
+	public Color getColor() {
+		return color;
+	}
+
+	public void setColor(Color color) {
+		this.color = color;
+	}
+
+	public Color getInnerColor() {
+		return innerColor;
+	}
+
+	public void setInnerColor(Color innerColor) {
+		this.innerColor = innerColor;
+	}
+
 	private final JPanel contentPanel = new JPanel();
 	private JTextField txtXCoord;
 	private JTextField txtYCoord;

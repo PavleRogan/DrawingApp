@@ -25,6 +25,26 @@ import geometry.Point;
 
 public class DlgHexagon extends JDialog {
 	
+	public Color getInnerColor() {
+		return innerColor;
+	}
+
+
+	public void setInnerColor(Color innerColor) {
+		this.innerColor = innerColor;
+	}
+
+
+	public Color getColor() {
+		return color;
+	}
+
+
+	public void setColor(Color color) {
+		this.color = color;
+	}
+
+
 	private HexagonAdapter hexagonAdapter = null;
 	private JLabel lblX;
 	private JLabel lblY;
