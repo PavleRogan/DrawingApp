@@ -1,5 +1,4 @@
 package mvc;
-
 import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -10,7 +9,6 @@ import javax.swing.JToggleButton;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.EmptyBorder;
-
 import drawing.DlgCircle;
 import drawing.DlgDonut;
 import drawing.DlgLine;
@@ -23,7 +21,6 @@ import geometry.Line;
 import geometry.Point;
 import geometry.Rectangle;
 import geometry.Shape;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -32,6 +29,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
+import javax.swing.BoxLayout;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
 
 public class DrawingFrame extends JFrame {
 		
@@ -65,6 +65,9 @@ public class DrawingFrame extends JFrame {
 	//public  Color color = Color.BLACK;
 	boolean waitingEndPoint = false;
 	public Point startPoint;
+	private final JPanel panelEast = new JPanel();
+	private final JButton btnToFront = new JButton("To Front");
+	private final JButton btnToBack = new JButton("To Back");
 	
 	
 	public JButton getBtnColor() {
@@ -113,13 +116,14 @@ public class DrawingFrame extends JFrame {
 		
 		// from ooit
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 50, 1211, 718);
+		setBounds(100, 100, 1500, 900);
 		JPanel contentPane= new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setTitle("Pavle Rogan IT5/2020");
-		setResizable(false);
+		setResizable(true);
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
+		view.setBackground(Color.WHITE);
 		
 		//pnlDrawing.addMouseListener(pnlDrawingClickListener());
 		
@@ -127,6 +131,8 @@ public class DrawingFrame extends JFrame {
 		
 		JPanel panel = new JPanel();
 		contentPane.add(panel, BorderLayout.WEST);
+		
+		
 		
 		btnsOperation.add(tglbtnMorD);
 		btnsOperation.add(tglbtnDraw);
@@ -162,28 +168,29 @@ public class DrawingFrame extends JFrame {
 				.addGroup(gl_panel.createSequentialGroup()
 					.addContainerGap()
 					.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
-						.addComponent(lblColors, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
-						.addComponent(tglbtnDonut, GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
-						.addComponent(tglbtnRectangle, GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
-						.addComponent(tglbtnCircle, GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
-						.addComponent(tglbtnLine, GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
-						.addComponent(tglbtnPoint, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
-						.addComponent(tglbtnDraw, GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
-						.addComponent(btnUndo, GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
+						.addComponent(btnInnerColor, GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
+						.addComponent(btnBorderColor, GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
+						.addComponent(lblColors, GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
 						.addComponent(btnRedo, GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
+						.addComponent(btnUndo, GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
 						.addComponent(btnDelete, GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
 						.addComponent(btnModify, GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
 						.addComponent(tglbtnMorD, GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
-						.addComponent(tglbtnHexagon, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
-						.addComponent(btnInnerColor, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
-						.addComponent(btnBorderColor, GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE))
+						.addComponent(tglbtnHexagon, GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
+						.addComponent(tglbtnDonut, GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
+						.addComponent(tglbtnRectangle, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
+						.addComponent(tglbtnCircle, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
+						.addComponent(tglbtnLine, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
+						.addComponent(tglbtnPoint, GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
+						.addComponent(tglbtnDraw, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE))
 					.addContainerGap())
 		);
 		gl_panel.setVerticalGroup(
 			gl_panel.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_panel.createSequentialGroup()
+					.addGap(23)
 					.addComponent(tglbtnDraw)
-					.addGap(9)
+					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(tglbtnPoint)
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(tglbtnLine)
@@ -195,23 +202,23 @@ public class DrawingFrame extends JFrame {
 					.addComponent(tglbtnDonut)
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(tglbtnHexagon)
-					.addGap(16)
+					.addGap(18)
 					.addComponent(tglbtnMorD)
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(btnModify)
-					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(btnDelete)
-					.addGap(40)
+					.addGap(39)
 					.addComponent(btnUndo)
-					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(btnRedo)
-					.addGap(19)
+					.addGap(18)
 					.addComponent(lblColors)
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(btnBorderColor)
-					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(btnInnerColor)
-					.addContainerGap(208, Short.MAX_VALUE))
+					.addContainerGap(364, Short.MAX_VALUE))
 		);
 		btnModify.setEnabled(false);
 		btnDelete.setEnabled(false);
@@ -221,6 +228,9 @@ public class DrawingFrame extends JFrame {
 		tglbtnCircle.setEnabled(true);
 		tglbtnDonut.setEnabled(true);
 		tglbtnHexagon.setEnabled(true);	
+		btnToFront.setEnabled(false);
+		btnToBack.setEnabled(false);
+
 
 		
 		tglbtnDraw.addActionListener(new ActionListener() {
@@ -255,6 +265,61 @@ public class DrawingFrame extends JFrame {
 		
 		
 		panel.setLayout(gl_panel);
+		
+		contentPane.add(panelEast, BorderLayout.EAST);
+		btnToFront.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				controller.toFront();
+			}
+		});
+		btnToBack.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				controller.toBack();
+			}
+		});
+		
+		JButton btnBringToFront = new JButton("Bring to front");
+		btnBringToFront.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		
+		JButton btnBringToBack = new JButton("Bring to back");
+		btnBringToBack.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+			}
+		});
+		
+		
+		
+		
+		GroupLayout gl_panelEast = new GroupLayout(panelEast);
+		gl_panelEast.setHorizontalGroup(
+			gl_panelEast.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panelEast.createSequentialGroup()
+					.addContainerGap()
+					.addGroup(gl_panelEast.createParallelGroup(Alignment.LEADING)
+						.addComponent(btnToFront, GroupLayout.DEFAULT_SIZE, 93, Short.MAX_VALUE)
+						.addComponent(btnToBack, GroupLayout.DEFAULT_SIZE, 71, Short.MAX_VALUE)
+						.addComponent(btnBringToFront)
+						.addComponent(btnBringToBack))
+					.addContainerGap())
+		);
+		gl_panelEast.setVerticalGroup(
+			gl_panelEast.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panelEast.createSequentialGroup()
+					.addGap(47)
+					.addComponent(btnToFront)
+					.addGap(18)
+					.addComponent(btnToBack)
+					.addGap(18)
+					.addComponent(btnBringToFront)
+					.addGap(18)
+					.addComponent(btnBringToBack)
+					.addGap(650))
+		);
+		panelEast.setLayout(gl_panelEast);
 	
 		
 		
@@ -266,6 +331,16 @@ public class DrawingFrame extends JFrame {
 		});
 		
 	
+	}
+
+
+	public JButton getBtnToFront() {
+		return btnToFront;
+	}
+
+
+	public JButton getBtnToBack() {
+		return btnToBack;
 	}
 
 

@@ -27,6 +27,11 @@ public class SelectedShapesObserver implements Observer {
 			//frame.getTglbtnDraw().setEnabled(true);
 			frame.getBtnModify().setEnabled(false);
 			frame.getBtnDelete().setEnabled(false);
+			frame.getBtnToFront().setEnabled(false);
+			frame.getBtnToBack().setEnabled(false);
+			
+
+			
 			
 		}
 		else if(numOfSelectedShapes == 1){
@@ -34,6 +39,8 @@ public class SelectedShapesObserver implements Observer {
 			//frame.getTglbtnDraw().setEnabled(false);
 			frame.getBtnModify().setEnabled(true);
 			frame.getBtnDelete().setEnabled(true);
+			frame.getBtnToFront().setEnabled(true);
+			frame.getBtnToBack().setEnabled(true);
 			
 		} 
 		else if(numOfSelectedShapes > 1) {
@@ -41,6 +48,8 @@ public class SelectedShapesObserver implements Observer {
 			//frame.getTglbtnDraw().setEnabled(false);
 			frame.getBtnModify().setEnabled(false);
 			frame.getBtnDelete().setEnabled(true);
+			frame.getBtnToFront().setEnabled(false);
+			frame.getBtnToBack().setEnabled(false);
 			
 		}
 	}

@@ -16,6 +16,8 @@ import command.RedoShapeCmd;
 import command.RemoveMultipleCmd;
 import command.RemoveShapeCmd;
 import command.SelectShapeCmd;
+import command.ToBackCmd;
+import command.ToFrontCmd;
 import command.UndoShapeCmd;
 import command.UpdateCircleCmd;
 import command.UpdateDonutCmd;
@@ -65,11 +67,10 @@ public class DrawingController {
 	private DeselectAllCmd deselectAllCmd;
 	private Color borderColor = Color.BLACK;
 	private Color innerColor = Color.WHITE;
-
-	
-	
 	private SelectedShapes selectedShapes;
 	private SelectedShapesObserver selectedShapesObserver;
+	private ToFrontCmd toFrontCmd;
+	private ToBackCmd toBackCmd;
 	
 	
 	public DrawingController(DrawingFrame frame, DrawingModel model) {
@@ -457,6 +458,29 @@ public class DrawingController {
 		public void chooseInnerColor() {
 			innerColor = JColorChooser.showDialog(null, "Choose a color", innerColor);
 			frame.getBtnInnerColor().setBackground(innerColor);
+			
+		}
+
+		public void toFront() {
+			// TODO Auto-generated method stub
+			
+			if(model.getShapeList().size()>0) {
+				Shape selectedShape = model.getShapeList().get(model.getSelected());
+				toFrontCmd = new ToFrontCmd(model, selectedShape);
+				toFrontCmd.execute();
+				frame.repaint();
+			}
+			
+		}
+
+		public void toBack() {
+			// TODO Auto-generated method stub
+			if(model.getShapeList().size()>0) {
+				Shape selectedShape = model.getShapeList().get(model.getSelected());
+				toBackCmd = new ToBackCmd(model, selectedShape);
+				toBackCmd.execute();
+				frame.repaint();
+			}
 			
 		}
 
