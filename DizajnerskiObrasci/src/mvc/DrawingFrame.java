@@ -68,8 +68,30 @@ public class DrawingFrame extends JFrame {
 	private final JPanel panelEast = new JPanel();
 	private final JButton btnToFront = new JButton("To Front");
 	private final JButton btnToBack = new JButton("To Back");
+	private JButton btnBringToFront = new JButton("Bring to front");
+	private JButton btnBringToBack = new JButton("Bring to back");
 	
 	
+	public JButton getBtnBringToFront() {
+		return btnBringToFront;
+	}
+
+
+	public void setBtnBringToFront(JButton btnBringToFront) {
+		this.btnBringToFront = btnBringToFront;
+	}
+
+
+	public JButton getBtnBringToBack() {
+		return btnBringToBack;
+	}
+
+
+	public void setBtnBringToBack(JButton btnBringToBack) {
+		this.btnBringToBack = btnBringToBack;
+	}
+
+
 	public JButton getBtnColor() {
 		return btnBorderColor;
 	}
@@ -230,6 +252,9 @@ public class DrawingFrame extends JFrame {
 		tglbtnHexagon.setEnabled(true);	
 		btnToFront.setEnabled(false);
 		btnToBack.setEnabled(false);
+		btnBringToFront.setEnabled(false);
+		btnBringToBack.setEnabled(false);
+		
 
 
 		
@@ -278,15 +303,16 @@ public class DrawingFrame extends JFrame {
 			}
 		});
 		
-		JButton btnBringToFront = new JButton("Bring to front");
+		
 		btnBringToFront.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				controller.bringToFront();
 			}
 		});
 		
-		JButton btnBringToBack = new JButton("Bring to back");
 		btnBringToBack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				controller.bringToBack();
 				
 			}
 		});

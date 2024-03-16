@@ -29,7 +29,9 @@ public class SelectedShapesObserver implements Observer {
 			frame.getBtnDelete().setEnabled(false);
 			frame.getBtnToFront().setEnabled(false);
 			frame.getBtnToBack().setEnabled(false);
-			
+			frame.getBtnBringToBack().setEnabled(false);
+			frame.getBtnBringToFront().setEnabled(false);
+
 
 			
 			
@@ -41,6 +43,8 @@ public class SelectedShapesObserver implements Observer {
 			frame.getBtnDelete().setEnabled(true);
 			frame.getBtnToFront().setEnabled(true);
 			frame.getBtnToBack().setEnabled(true);
+			frame.getBtnBringToBack().setEnabled(true);
+			frame.getBtnBringToFront().setEnabled(true);
 			
 		} 
 		else if(numOfSelectedShapes > 1) {
@@ -50,6 +54,8 @@ public class SelectedShapesObserver implements Observer {
 			frame.getBtnDelete().setEnabled(true);
 			frame.getBtnToFront().setEnabled(false);
 			frame.getBtnToBack().setEnabled(false);
+			frame.getBtnBringToBack().setEnabled(false);
+			frame.getBtnBringToFront().setEnabled(false);
 			
 		}
 	}

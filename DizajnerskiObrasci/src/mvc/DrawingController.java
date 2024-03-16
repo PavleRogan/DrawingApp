@@ -10,6 +10,8 @@ import javax.swing.JOptionPane;
 
 import adapter.HexagonAdapter;
 import command.AddShapeCmd;
+import command.BringToBackCmd;
+import command.BringToFrontCmd;
 import command.DeselectAllCmd;
 import command.DeselectShapeCmd;
 import command.RedoShapeCmd;
@@ -71,6 +73,8 @@ public class DrawingController {
 	private SelectedShapesObserver selectedShapesObserver;
 	private ToFrontCmd toFrontCmd;
 	private ToBackCmd toBackCmd;
+	private BringToFrontCmd bringToFrontCmd;
+	private BringToBackCmd bringToBackCmd;
 	
 	
 	public DrawingController(DrawingFrame frame, DrawingModel model) {
@@ -479,6 +483,35 @@ public class DrawingController {
 				Shape selectedShape = model.getShapeList().get(model.getSelected());
 				toBackCmd = new ToBackCmd(model, selectedShape);
 				toBackCmd.execute();
+				frame.repaint();
+			}
+			
+		}
+
+		public void bringToFront() {
+			if(model.getShapeList().size()>0) {
+				
+				Shape selected = model.getShapeList().get(model.getSelected());
+				
+				bringToFrontCmd = new BringToFrontCmd(selected, model);
+				
+				bringToFrontCmd.execute();
+				
+				frame.repaint();
+			}
+			
+		}
+
+		public void bringToBack() {
+			
+			if(model.getShapeList().size()>0) {
+				
+				Shape selectedShape = model.getShapeList().get(model.getSelected());
+				
+				bringToBackCmd = new BringToBackCmd(selectedShape, model);
+				
+				bringToBackCmd.execute();
+	
 				frame.repaint();
 			}
 			

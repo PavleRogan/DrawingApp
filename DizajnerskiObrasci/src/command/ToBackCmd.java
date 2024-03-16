@@ -52,10 +52,13 @@ public class ToBackCmd implements Command {
 		for(int i = 0; i < model.getShapeList().size(); i++){
 			try {
 				if(model.getShapeList().get(i).isSelected()) {
+					
 					shape = model.getShapeList().get(i);
-					if(i+1==model.getShapeList().size()) {
+					
+					if(i + 1 == model.getShapeList().size()) {
 						return;
 					}
+					
 					model.getShapeList().set(i, model.getShapeList().get(i+1));
 					model.getShapeList().set(i+1, shape);
 					return;
