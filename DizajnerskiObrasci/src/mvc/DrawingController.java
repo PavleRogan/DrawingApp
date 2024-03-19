@@ -4,7 +4,9 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Iterator;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JColorChooser;
 import javax.swing.JOptionPane;
 
@@ -75,7 +77,8 @@ public class DrawingController {
 	private ToBackCmd toBackCmd;
 	private BringToFrontCmd bringToFrontCmd;
 	private BringToBackCmd bringToBackCmd;
-	
+	private ArrayList<String> listToLog;
+	private String lstForLogging;
 	
 	public DrawingController(DrawingFrame frame, DrawingModel model) {
 		super();
@@ -84,6 +87,7 @@ public class DrawingController {
 		this.selectedShapes = new SelectedShapes();
 		this.selectedShapesObserver = new SelectedShapesObserver(frame);
 		this.selectedShapes.addObserver(selectedShapesObserver);
+		listToLog = new ArrayList<String>();
 	}
 
 	public void mouseClicked(MouseEvent e) {
@@ -107,13 +111,15 @@ public class DrawingController {
 			for (int i = model.getShapeList().size()-1; i >= 0; i--) {
 				if (model.getShape(i).contains(mouseClick.getX(), mouseClick.getY()) && model.getShape(i).isSelected() == true  ) {
 					deselectShapeCmd = new DeselectShapeCmd(model.getShape(i),model);
-					deselectShapeCmd.execute();										
+					deselectShapeCmd.execute();		
+					log(model.getShape(i),"Deselect");	
 					break;
 				}
 				if (model.getShape(i).contains(mouseClick.getX(), mouseClick.getY()) && model.getShape(i).isSelected() == false  ) {
 					
 					selectShapeCmd = new SelectShapeCmd(model.getShape(i),model);
 					selectShapeCmd.execute();
+					log(model.getShape(i),"Select");
 					break;
 					
 				}
@@ -128,6 +134,8 @@ public class DrawingController {
 	            
 	            deselectAllCmd = new DeselectAllCmd(selectedShapesList,model);
 	            deselectAllCmd.execute();
+	            listToLog.add("Deselect: ALL");
+        		frame.getLogList().setModel(toDlm());
 				
 		}
 			this.selectedShapes.setNumOfSelectedShapes(model.getNumberOfSelectedShapes());
@@ -151,6 +159,7 @@ public class DrawingController {
 				frame.getBtnColor().setBackground(borderColor);
 				model.clearRedoList();
 				model.clearRedoList();
+				log(dlgPoint.getPoint(), "Draw");
 				
 			}
 			
@@ -170,6 +179,7 @@ public class DrawingController {
 					borderColor = dlgLine.getColor();
 					frame.getBtnColor().setBackground(borderColor);
 					model.clearRedoList();
+					log(dlgLine.getLine(), "Draw");
 				}
 				waitingEndPoint=false;
 				frame.repaint();
@@ -189,7 +199,9 @@ public class DrawingController {
 				innerColor = dlgCircle.getInnerColor();
 				frame.getBtnColor().setBackground(borderColor);
 				frame.getBtnInnerColor().setBackground(innerColor);
-			model.clearRedoList();}
+				model.clearRedoList();
+				log(dlgCircle.getCircle(), "Draw");
+				}
 			frame.repaint();
 			return;
 		}else if(frame.tglbtnRectangle.isSelected()) {
@@ -204,6 +216,7 @@ public class DrawingController {
 				frame.getBtnColor().setBackground(borderColor);
 				frame.getBtnInnerColor().setBackground(innerColor);
 				model.clearRedoList();	
+				log(dlgRectangle.getRectangle(), "Draw");
 			}
 			frame.repaint();
 			return;
@@ -219,6 +232,7 @@ public class DrawingController {
 				frame.getBtnColor().setBackground(borderColor);
 				frame.getBtnInnerColor().setBackground(innerColor);
 				model.clearRedoList();
+				log(dlgDonut.getDonut(), "Draw");
 			}
 			frame.repaint();
 			return;	
@@ -237,6 +251,7 @@ public class DrawingController {
 				frame.getBtnColor().setBackground(borderColor);
 				frame.getBtnInnerColor().setBackground(innerColor);
 				model.clearRedoList();
+				log(dlgHexagon.getHexagonAdapter(), "Draw");
 
 			}
 			frame.repaint();
@@ -297,6 +312,7 @@ public class DrawingController {
 				borderColor = dlgPoint.getColor();
 				frame.getBtnColor().setBackground(borderColor);
 				model.clearRedoList();
+				log(dlgPoint.getPoint(),"Modify");
 				//model.setShape(index, dlgPoint.getPoint());
 				frame.repaint();
 			}
@@ -314,6 +330,7 @@ public class DrawingController {
 				frame.getBtnColor().setBackground(borderColor);
 				//model.setShape(index, dlgLine.getLine());
 				model.clearRedoList();
+				log(dlgLine.getLine(),"Modify");
 				frame.repaint();
 			}
 		}else if (shape instanceof Rectangle) {
@@ -333,6 +350,7 @@ public class DrawingController {
 				frame.getBtnInnerColor().setBackground(innerColor);
 				//model.setShape(index, dlgRectangle.getRectangle());
 				model.clearRedoList();
+				log(dlgRectangle.getRectangle(),"Modify");
 				frame.repaint();
 			}
 		}else if (shape instanceof Donut) {
@@ -352,6 +370,7 @@ public class DrawingController {
 					frame.getBtnInnerColor().setBackground(innerColor);
 					//model.setShape(index, dlgDonut.getDonut());
 					model.clearRedoList();
+					log(dlgDonut.getDonut(),"Modify");
 					frame.repaint();
 				}
 		}else if (shape instanceof Circle) {
@@ -371,6 +390,7 @@ public class DrawingController {
 				frame.getBtnInnerColor().setBackground(innerColor);
 				//model.setShape(index, dlgCircle.getCircle());
 				model.clearRedoList();
+				log(dlgCircle.getCircle(),"Modify");
 				frame.repaint();
 			    }
 		    } else if (shape instanceof HexagonAdapter) {
@@ -390,6 +410,7 @@ public class DrawingController {
 					frame.getBtnColor().setBackground(borderColor);
 					frame.getBtnInnerColor().setBackground(innerColor);
 					model.clearRedoList();
+					log(dlgHexagon.getHexagonAdapter(),"Modify");
 					frame.repaint();
 				}
 			} 
@@ -405,6 +426,13 @@ public class DrawingController {
 		    }
 			
 			if (JOptionPane.showConfirmDialog(null, "Do you really want to delete shape?", "Delete", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == 0){
+				
+				ArrayList<Shape> selectedShapesList= new ArrayList<Shape>();
+	            model.getShapeList().forEach(shape -> {
+	            	if(shape.isSelected())
+	            		selectedShapesList.add(shape);});
+	            logList(selectedShapesList);
+				
 				
 				ArrayList<Integer> selectedIndexes = model.getSelectedIndexes();
 		        ArrayList<IndexedShapeHelper> helperList = new ArrayList<>();
@@ -438,6 +466,8 @@ public class DrawingController {
 				frame.repaint();
 				
 				this.selectedShapes.setNumOfSelectedShapes(model.getNumberOfSelectedShapes());
+				listToLog.add("Undo");
+				frame.getLogList().setModel(toDlm());
 					
 			}
 		}
@@ -451,6 +481,8 @@ public class DrawingController {
 				frame.repaint();
 				
 				this.selectedShapes.setNumOfSelectedShapes(model.getNumberOfSelectedShapes());
+				listToLog.add("Redo");
+				frame.getLogList().setModel(toDlm());
 			}
 		}
 		
@@ -472,6 +504,7 @@ public class DrawingController {
 				Shape selectedShape = model.getShapeList().get(model.getSelected());
 				toFrontCmd = new ToFrontCmd(model, selectedShape);
 				toFrontCmd.execute();
+				log(selectedShape,"ToFront");
 				frame.repaint();
 			}
 			
@@ -483,6 +516,7 @@ public class DrawingController {
 				Shape selectedShape = model.getShapeList().get(model.getSelected());
 				toBackCmd = new ToBackCmd(model, selectedShape);
 				toBackCmd.execute();
+				log(selectedShape,"ToBack");
 				frame.repaint();
 			}
 			
@@ -496,6 +530,8 @@ public class DrawingController {
 				bringToFrontCmd = new BringToFrontCmd(selected, model);
 				
 				bringToFrontCmd.execute();
+				
+				log(selected,"BringToFront");
 				
 				frame.repaint();
 			}
@@ -511,11 +547,81 @@ public class DrawingController {
 				bringToBackCmd = new BringToBackCmd(selectedShape, model);
 				
 				bringToBackCmd.execute();
+				log(selectedShape,"BringToBack");
 	
 				frame.repaint();
 			}
 			
 		}
+		
+		private void log(Shape shape, String operation) {		
+			
+			if(shape instanceof Point) {
+				
+				listToLog.add(operation + ": Point: " +((Point)shape).toString());			
+			}else if (shape instanceof Line) {
+				
+				listToLog.add(operation + ": Line: " +((Line)shape).toString());			
+	
+			}else if(shape instanceof Donut) {
+				
+				listToLog.add(operation + ": Donut: " +((Donut)shape).toString());			
+	
+			}else if(shape instanceof Circle) {
+				
+				listToLog.add(operation + ": Circle: " +((Circle)shape).toString());			
+	
+			}else if(shape instanceof Rectangle) {
+				
+				listToLog.add(operation + ": Rectangle: " +((Rectangle)shape).toString());			
+	
+			}else if(shape instanceof HexagonAdapter) {
+				
+				listToLog.add(operation + ": Hexagon: " +((HexagonAdapter)shape).toString());			
+			}
+		
+		frame.getLogList().setModel(toDlm());
+	}
+		
+
+		private void logList(ArrayList<Shape> selectedList) {
+			 lstForLogging ="Delete All";
+			selectedList.forEach(shape -> {
+				if(shape instanceof Point) {
+					lstForLogging= lstForLogging + ": Point= " +((Point)shape).toString();			
+				}else if (shape instanceof Line) {
+					lstForLogging= lstForLogging + ": Line= " +((Line)shape).toString();			
+		
+				}else if(shape instanceof Donut) {
+					lstForLogging= lstForLogging +  ": Donut= " +((Donut)shape).toString();			
+		
+				}else if(shape instanceof Circle) {
+					lstForLogging= lstForLogging + ": Circle= " +((Circle)shape).toString();			
+		
+				}else if(shape instanceof Rectangle) {
+					lstForLogging= lstForLogging + ": Rectangle= " +((Rectangle)shape).toString();			
+		
+				}else if(shape instanceof HexagonAdapter) {
+					lstForLogging= lstForLogging + ": Hexagon= " +((HexagonAdapter)shape).toString();			
+				}
+			});
+			listToLog.add(lstForLogging);
+			frame.getLogList().setModel(toDlm());
+		}
+		
+		private DefaultListModel<String> toDlm()
+		{
+			Iterator<String> iterator = listToLog.iterator();
+			
+			DefaultListModel<String> dlm = new DefaultListModel<String>();
+			
+			while(iterator.hasNext()) {
+				
+				dlm.addElement(iterator.next());
+			}	
+			return dlm;
+		}
+		
 
 		
 	}

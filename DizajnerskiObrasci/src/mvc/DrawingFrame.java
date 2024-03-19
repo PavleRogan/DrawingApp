@@ -28,17 +28,17 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.SwingConstants;
 import javax.swing.BoxLayout;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import javax.swing.JScrollPane;
 
 public class DrawingFrame extends JFrame {
 		
 	private DrawingView view = new DrawingView();
 	private DrawingController controller;
-	
-	
 	private JPanel contentPane;
 	
 	public JToggleButton tglbtnPoint = new JToggleButton("Point");
@@ -70,7 +70,18 @@ public class DrawingFrame extends JFrame {
 	private final JButton btnToBack = new JButton("To Back");
 	private JButton btnBringToFront = new JButton("Bring to front");
 	private JButton btnBringToBack = new JButton("Bring to back");
+	private JList<String> logList = new JList<String>();
+	private JScrollPane scrollPane;
 	
+   
+	public JList<String> getLogList() {
+		return logList;
+	}
+
+
+	public void setLogList(JList<String> logList) {
+		this.logList = logList;
+	}
 	
 	public JButton getBtnBringToFront() {
 		return btnBringToFront;
@@ -148,13 +159,13 @@ public class DrawingFrame extends JFrame {
 		view.setBackground(Color.WHITE);
 		
 		//pnlDrawing.addMouseListener(pnlDrawingClickListener());
+		 //logList = new JList<String>(new String[]{"Log item 1", "Log item 2", "Log item 3","Log item 2", "Log item 3"});
 		
 		contentPane.add(view, BorderLayout.CENTER);
 		
 		JPanel panel = new JPanel();
 		contentPane.add(panel, BorderLayout.WEST);
-		
-		
+		scrollPane = new JScrollPane();
 		
 		btnsOperation.add(tglbtnMorD);
 		btnsOperation.add(tglbtnDraw);
@@ -303,6 +314,8 @@ public class DrawingFrame extends JFrame {
 			}
 		});
 		
+	
+		
 		
 		btnBringToFront.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -320,31 +333,37 @@ public class DrawingFrame extends JFrame {
 		
 		
 		
+		
+		
 		GroupLayout gl_panelEast = new GroupLayout(panelEast);
 		gl_panelEast.setHorizontalGroup(
-			gl_panelEast.createParallelGroup(Alignment.LEADING)
+			gl_panelEast.createParallelGroup(Alignment.TRAILING)
 				.addGroup(gl_panelEast.createSequentialGroup()
 					.addContainerGap()
 					.addGroup(gl_panelEast.createParallelGroup(Alignment.LEADING)
-						.addComponent(btnToFront, GroupLayout.DEFAULT_SIZE, 93, Short.MAX_VALUE)
-						.addComponent(btnToBack, GroupLayout.DEFAULT_SIZE, 71, Short.MAX_VALUE)
-						.addComponent(btnBringToFront)
-						.addComponent(btnBringToBack))
+						.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
+						.addComponent(btnToFront, GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
+						.addComponent(btnToBack, GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
+						.addComponent(btnBringToFront, GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
+						.addComponent(btnBringToBack, GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE))
 					.addContainerGap())
 		);
 		gl_panelEast.setVerticalGroup(
 			gl_panelEast.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_panelEast.createSequentialGroup()
-					.addGap(47)
+					.addGap(19)
 					.addComponent(btnToFront)
-					.addGap(18)
+					.addPreferredGap(ComponentPlacement.UNRELATED)
 					.addComponent(btnToBack)
-					.addGap(18)
+					.addPreferredGap(ComponentPlacement.UNRELATED)
 					.addComponent(btnBringToFront)
-					.addGap(18)
+					.addPreferredGap(ComponentPlacement.UNRELATED)
 					.addComponent(btnBringToBack)
-					.addGap(650))
+					.addGap(26)
+					.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 185, GroupLayout.PREFERRED_SIZE)
+					.addGap(491))
 		);
+		scrollPane.setViewportView(logList);
 		panelEast.setLayout(gl_panelEast);
 	
 		
@@ -358,6 +377,8 @@ public class DrawingFrame extends JFrame {
 		
 	
 	}
+	
+	
 
 
 	public JButton getBtnToFront() {
