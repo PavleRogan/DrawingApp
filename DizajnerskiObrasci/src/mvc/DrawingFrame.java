@@ -72,6 +72,7 @@ public class DrawingFrame extends JFrame {
 	private JButton btnBringToBack = new JButton("Bring to back");
 	private JList<String> logList = new JList<String>();
 	private JScrollPane scrollPane;
+	private final JButton btnSaveDrawing = new JButton("Save Drawing");
 	
    
 	public JList<String> getLogList() {
@@ -145,6 +146,11 @@ public class DrawingFrame extends JFrame {
 		
 
 	public DrawingFrame() {
+		btnSaveDrawing.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				controller.saveDrawing();
+			}
+		});
 		
 		
 		// from ooit
@@ -330,6 +336,13 @@ public class DrawingFrame extends JFrame {
 			}
 		});
 		
+		JButton btnSaveLog = new JButton("Save Log");
+		btnSaveLog.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				controller.saveLog();
+			}
+		});
+		
 		
 		
 		
@@ -338,9 +351,11 @@ public class DrawingFrame extends JFrame {
 		GroupLayout gl_panelEast = new GroupLayout(panelEast);
 		gl_panelEast.setHorizontalGroup(
 			gl_panelEast.createParallelGroup(Alignment.TRAILING)
-				.addGroup(gl_panelEast.createSequentialGroup()
+				.addGroup(Alignment.LEADING, gl_panelEast.createSequentialGroup()
 					.addContainerGap()
 					.addGroup(gl_panelEast.createParallelGroup(Alignment.LEADING)
+						.addComponent(btnSaveDrawing, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
+						.addComponent(btnSaveLog, GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
 						.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
 						.addComponent(btnToFront, GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
 						.addComponent(btnToBack, GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
@@ -361,7 +376,11 @@ public class DrawingFrame extends JFrame {
 					.addComponent(btnBringToBack)
 					.addGap(26)
 					.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 185, GroupLayout.PREFERRED_SIZE)
-					.addGap(491))
+					.addGap(18)
+					.addComponent(btnSaveLog)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(btnSaveDrawing)
+					.addGap(425))
 		);
 		scrollPane.setViewportView(logList);
 		panelEast.setLayout(gl_panelEast);

@@ -8,7 +8,9 @@ import java.util.Iterator;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JColorChooser;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileSystemView;
 
 import adapter.HexagonAdapter;
 import command.AddShapeCmd;
@@ -44,6 +46,9 @@ import geometry.Rectangle;
 import geometry.Shape;
 import observer.SelectedShapes;
 import observer.SelectedShapesObserver;
+import strategy.SaveDrawing;
+import strategy.SaveLog;
+import strategy.SavingManager;
 
 public class DrawingController {
 	
@@ -79,6 +84,9 @@ public class DrawingController {
 	private BringToBackCmd bringToBackCmd;
 	private ArrayList<String> listToLog;
 	private String lstForLogging;
+	private SaveLog saveLog;
+	private SavingManager savingManager;
+	private SaveDrawing saveDrawing;
 	
 	public DrawingController(DrawingFrame frame, DrawingModel model) {
 		super();
@@ -585,7 +593,7 @@ public class DrawingController {
 		
 
 		private void logList(ArrayList<Shape> selectedList) {
-			 lstForLogging ="Delete All";
+			 lstForLogging ="Delete";
 			selectedList.forEach(shape -> {
 				if(shape instanceof Point) {
 					lstForLogging= lstForLogging + ": Point= " +((Point)shape).toString();			
@@ -620,6 +628,46 @@ public class DrawingController {
 				dlm.addElement(iterator.next());
 			}	
 			return dlm;
+		}
+
+		public void saveLog() {
+			
+			saveLog = new SaveLog(frame);
+			savingManager = new SavingManager(saveLog);	
+			
+			JFileChooser jFileChooser= new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+			
+			int dlg = jFileChooser.showOpenDialog(frame);	
+			
+			if (dlg == JFileChooser.APPROVE_OPTION){
+				
+	           String address= jFileChooser.getSelectedFile().getPath();
+	            savingManager.save(address);
+			}	else {
+				
+	           JOptionPane.showMessageDialog(null, "Saving has been canceled!", "Message", JOptionPane.INFORMATION_MESSAGE);
+	        }
+			
+		}
+
+		public void saveDrawing() {
+			
+			saveDrawing = new SaveDrawing(model);
+			savingManager = new SavingManager(saveDrawing);
+			
+			JFileChooser jFileChooser= new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+			
+			int dlg = jFileChooser.showOpenDialog(frame);
+			
+			if (dlg == JFileChooser.APPROVE_OPTION){
+				
+	            String address= jFileChooser.getSelectedFile().getPath();
+	            savingManager.save(address);
+			}	else {
+				
+	           JOptionPane.showMessageDialog(null, "Saving canceled!", "Message", JOptionPane.INFORMATION_MESSAGE);
+	        }
+			
 		}
 		
 
