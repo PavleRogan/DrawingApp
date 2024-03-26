@@ -73,6 +73,7 @@ public class DrawingFrame extends JFrame {
 	private JList<String> logList = new JList<String>();
 	private JScrollPane scrollPane;
 	private final JButton btnSaveDrawing = new JButton("Save Drawing");
+	private final JButton btnNextStep = new JButton("Next");
 	
    
 	public JList<String> getLogList() {
@@ -91,6 +92,16 @@ public class DrawingFrame extends JFrame {
 
 	public void setBtnBringToFront(JButton btnBringToFront) {
 		this.btnBringToFront = btnBringToFront;
+	}
+
+
+	public JButton getBtnUndo() {
+		return btnUndo;
+	}
+
+
+	public void setBtnUndo(JButton btnUndo) {
+		this.btnUndo = btnUndo;
 	}
 
 
@@ -124,6 +135,11 @@ public class DrawingFrame extends JFrame {
 	}
 
 
+	public JButton getBtnNextStep() {
+		return btnNextStep;
+	}
+
+
 	public JToggleButton getTglbtnDraw() {
 		return tglbtnDraw;
 	}
@@ -146,6 +162,11 @@ public class DrawingFrame extends JFrame {
 		
 
 	public DrawingFrame() {
+		btnNextStep.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				controller.loadNext();
+			}
+		});
 		btnSaveDrawing.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				controller.saveDrawing();
@@ -271,6 +292,7 @@ public class DrawingFrame extends JFrame {
 		btnToBack.setEnabled(false);
 		btnBringToFront.setEnabled(false);
 		btnBringToBack.setEnabled(false);
+		btnNextStep.setEnabled(false);
 		
 
 
@@ -343,6 +365,13 @@ public class DrawingFrame extends JFrame {
 			}
 		});
 		
+		JButton btnLoadLog = new JButton("Load Log");
+		btnLoadLog.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				controller.loadLog();
+			}
+		});
+		
 		
 		
 		
@@ -350,17 +379,19 @@ public class DrawingFrame extends JFrame {
 		
 		GroupLayout gl_panelEast = new GroupLayout(panelEast);
 		gl_panelEast.setHorizontalGroup(
-			gl_panelEast.createParallelGroup(Alignment.TRAILING)
-				.addGroup(Alignment.LEADING, gl_panelEast.createSequentialGroup()
+			gl_panelEast.createParallelGroup(Alignment.LEADING)
+				.addGroup(Alignment.TRAILING, gl_panelEast.createSequentialGroup()
 					.addContainerGap()
-					.addGroup(gl_panelEast.createParallelGroup(Alignment.LEADING)
-						.addComponent(btnSaveDrawing, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
-						.addComponent(btnSaveLog, GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
-						.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
-						.addComponent(btnToFront, GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
-						.addComponent(btnToBack, GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
-						.addComponent(btnBringToFront, GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
-						.addComponent(btnBringToBack, GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE))
+					.addGroup(gl_panelEast.createParallelGroup(Alignment.TRAILING)
+						.addComponent(btnNextStep, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
+						.addComponent(btnSaveDrawing, GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
+						.addComponent(btnSaveLog, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
+						.addComponent(scrollPane, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
+						.addComponent(btnToFront, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
+						.addComponent(btnToBack, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
+						.addComponent(btnBringToFront, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
+						.addComponent(btnBringToBack, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
+						.addComponent(btnLoadLog, GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE))
 					.addContainerGap())
 		);
 		gl_panelEast.setVerticalGroup(
@@ -380,7 +411,11 @@ public class DrawingFrame extends JFrame {
 					.addComponent(btnSaveLog)
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(btnSaveDrawing)
-					.addGap(425))
+					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addComponent(btnLoadLog)
+					.addGap(18)
+					.addComponent(btnNextStep)
+					.addGap(355))
 		);
 		scrollPane.setViewportView(logList);
 		panelEast.setLayout(gl_panelEast);

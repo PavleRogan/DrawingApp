@@ -5,7 +5,7 @@ import java.awt.Graphics;
 
 public abstract class SurfaceShape extends Shape {
 	
-	private Color innerColor;
+	protected Color innerColor;
 	
 	public abstract void fill(Graphics g);
 

@@ -32,6 +32,14 @@ public class HexagonAdapter extends SurfaceShape {
 		hexagon.setBorderColor(color);
 		
 	}
+	
+	public HexagonAdapter(Point p, int r, Color borderColor, Color innerColor) {
+
+		this.hexagon = new Hexagon(p.getX(), p.getY(), r);
+		this.hexagon.setBorderColor(borderColor);
+		this.hexagon.setAreaColor(innerColor);
+
+	}
 
 	
 	public Hexagon getHexagon() {
@@ -147,7 +155,7 @@ public class HexagonAdapter extends SurfaceShape {
 	}
 	
 	public String toString() {
-		return "Center: "+(new Point(hexagon.getX(),hexagon.getY()))+" Radius= "+hexagon.getR()  + " color= " + hexagon.getBorderColor().getRGB() + " innerColor= " +hexagon.getAreaColor().getRGB() ;
+		return "Center: "+(new Point(hexagon.getX(),hexagon.getY()))+" radius= "+hexagon.getR()  + " borderColor= " + hexagon.getBorderColor().getRGB() + " innerColor= " +hexagon.getAreaColor().getRGB() ;
 
 	}
 	

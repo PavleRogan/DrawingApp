@@ -3,6 +3,10 @@ package mvc;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -87,6 +91,9 @@ public class DrawingController {
 	private SaveLog saveLog;
 	private SavingManager savingManager;
 	private SaveDrawing saveDrawing;
+	private ArrayList<String> loadedLog;
+	private int logStep;
+	private Shape selectedShape;
 	
 	public DrawingController(DrawingFrame frame, DrawingModel model) {
 		super();
@@ -566,26 +573,26 @@ public class DrawingController {
 			
 			if(shape instanceof Point) {
 				
-				listToLog.add(operation + ": Point: " +((Point)shape).toString());			
+				listToLog.add(operation + ": Point= " +((Point)shape).toString());			
 			}else if (shape instanceof Line) {
 				
-				listToLog.add(operation + ": Line: " +((Line)shape).toString());			
+				listToLog.add(operation + ": Line= " +((Line)shape).toString());			
 	
 			}else if(shape instanceof Donut) {
 				
-				listToLog.add(operation + ": Donut: " +((Donut)shape).toString());			
+				listToLog.add(operation + ": Donut= " +((Donut)shape).toString());			
 	
 			}else if(shape instanceof Circle) {
 				
-				listToLog.add(operation + ": Circle: " +((Circle)shape).toString());			
+				listToLog.add(operation + ": Circle= " +((Circle)shape).toString());			
 	
 			}else if(shape instanceof Rectangle) {
 				
-				listToLog.add(operation + ": Rectangle: " +((Rectangle)shape).toString());			
+				listToLog.add(operation + ": Rectangle= " +((Rectangle)shape).toString());			
 	
 			}else if(shape instanceof HexagonAdapter) {
 				
-				listToLog.add(operation + ": Hexagon: " +((HexagonAdapter)shape).toString());			
+				listToLog.add(operation + ": Hexagon= " +((HexagonAdapter)shape).toString());			
 			}
 		
 		frame.getLogList().setModel(toDlm());
@@ -630,7 +637,24 @@ public class DrawingController {
 			return dlm;
 		}
 
+		public int getCountSelected() {
+			int numberOfSelected= 0;
+			
+			for (int i = model.getShapeList().size()-1; i >= 0; i--) {
+				
+				if (model.getShape(i).isSelected()) {
+					
+					numberOfSelected++;
+				}
+			}	
+			
+			
+			return numberOfSelected;
+		}
+		
 		public void saveLog() {
+			
+			stopCurrentLog();
 			
 			saveLog = new SaveLog(frame);
 			savingManager = new SavingManager(saveLog);	
@@ -652,6 +676,8 @@ public class DrawingController {
 
 		public void saveDrawing() {
 			
+			stopCurrentLog();
+			
 			saveDrawing = new SaveDrawing(model);
 			savingManager = new SavingManager(saveDrawing);
 			
@@ -669,7 +695,297 @@ public class DrawingController {
 	        }
 			
 		}
+
+		public void loadLog() {
+			
+			stopCurrentLog();
+			
+			JFileChooser jFileChooser = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+			int dlg = jFileChooser.showOpenDialog(frame);
+			File file = jFileChooser.getSelectedFile();
+			
+			if(getCountSelected() > 0) {
+				
+				deselectAllCmd= new DeselectAllCmd((ArrayList<Shape>)model.getShapeList(), this.model);
+				deselectAllCmd.execute();
+				listToLog.add("Deselect: ALL");
+				
+				frame.getLogList().setModel(toDlm());
+			}
+			
+			if (dlg == JFileChooser.APPROVE_OPTION) {
+			
+				try {
+					
+					loadedLog= new ArrayList<String>();
+					loadedLog.addAll(Files.readAllLines(Paths.get(file.getPath())));
+					logStep = 0;
+					
+					frame.getLogList().removeAll();
+					
+					frame.getBtnUndo().setEnabled(false);
+					frame.getBtnNextStep().setEnabled(true);
+					
+					listToLog.addAll(loadedLog);
+					frame.getLogList().setModel(toDlm());
+
+				}  catch (IOException ioe) {
+					JOptionPane.showMessageDialog(null, "An error occured!", "Message",
+							JOptionPane.INFORMATION_MESSAGE);
+
+				}
+				
+				
+				frame.getView().repaint();
+				
+			} else {
+				JOptionPane.showMessageDialog(null, "Loading cancelled!", "Message", JOptionPane.INFORMATION_MESSAGE);
+			}
+			
+			
+		}
+
+		public void loadNext() {
+			
+			String logLine = loadedLog.get(logStep);
+			
+			String[] cmdArray = logLine.split(" ");		
+			String operation = cmdArray[0];
+			String loggedShape ="";
+			
+			 System.out.println("Operation: " + operation);
+			
+			if(cmdArray.length>1) {
+				
+				loggedShape = cmdArray[1];
+				 System.out.println(" " + loggedShape);
+
+			}
+			if(operation.equals("Draw:")) {
+				
+				setDraw();
+				
+				
+				Shape shape;
+				
+				if(loggedShape.equals("Point=")) {
+					
+					shape = new Point(Integer.parseInt(cmdArray[2]),Integer.parseInt(cmdArray[3]),Color.decode(cmdArray[5]));
+					addShapeCmd = new AddShapeCmd(shape, model);
+					
+				}else if(loggedShape.equals("Line=")) {
+					
+					shape = new Line(new Point(Integer.parseInt(cmdArray[2]),Integer.parseInt(cmdArray[3])),new Point(Integer.parseInt(cmdArray[7]),Integer.parseInt(cmdArray[8])), new Color(Integer.parseInt(cmdArray[12])));
+					addShapeCmd = new AddShapeCmd(shape, model);
+					
+				}else if(loggedShape.equals("Rectangle=")) {
+					
+					shape = new Rectangle(new Point (Integer.parseInt(cmdArray[3]),Integer.parseInt(cmdArray[4])), Integer.parseInt(cmdArray[8]), Integer.parseInt(cmdArray[10]),new Color(Integer.parseInt(cmdArray[12])),new Color(Integer.parseInt(cmdArray[14])));
+					addShapeCmd = new AddShapeCmd(shape, model);
+					
+				}else if(loggedShape.equals("Donut=")) {
+					
+					shape = new Donut(new Point (Integer.parseInt(cmdArray[3]),Integer.parseInt(cmdArray[4])), Integer.parseInt(cmdArray[8]),Integer.parseInt(cmdArray[14]),new Color(Integer.parseInt(cmdArray[10])),new Color(Integer.parseInt(cmdArray[12])));
+					addShapeCmd = new AddShapeCmd(shape, model);
+					
+				}else if(loggedShape.equals("Circle=")) {
+					
+					Circle circle = new Circle(new Point (Integer.parseInt(cmdArray[3]),Integer.parseInt(cmdArray[4])), Integer.parseInt(cmdArray[8]),new Color(Integer.parseInt(cmdArray[10])),new Color(Integer.parseInt(cmdArray[12])));
+					addShapeCmd = new AddShapeCmd(circle, model);
+					
+				}else if(loggedShape.equals("Hexagon=")) {
+					
+					shape = new HexagonAdapter(new Point (Integer.parseInt(cmdArray[3]),Integer.parseInt(cmdArray[4])), Integer.parseInt(cmdArray[8]),new Color(Integer.parseInt(cmdArray[10])),new Color(Integer.parseInt(cmdArray[12])));
+					addShapeCmd = new AddShapeCmd(shape, model);
+					
+				}
+				//addShapeCmd.execute();
+				//commandList.add(addShapeCmd);
+				//model.addToUndoList(addShapeCmd);
+				
+				if (addShapeCmd != null) {
+				    addShapeCmd.execute();
+				    model.addToUndoList(addShapeCmd);
+				} else {
+				    // Handle the case where addShapeCmd is null
+				    System.err.println("addShapeCmd is null. Cannot execute.");
+				}
+				
+				frame.getBtnUndo().setEnabled(true);	
+				
+				
+			}else if (operation.equals("Delete:")) {
+				ArrayList<Shape> selectedShapesList= new ArrayList<Shape>();
+	            model.getShapeList().forEach(shape -> {
+	            	if(shape.isSelected())
+	            		selectedShapesList.add(shape);});
+	            selectedShapesList.forEach(shape -> {
+						removeShapeCmd = new RemoveShapeCmd(shape,model);
+						removeShapeCmd.execute();
+						model.addToUndoList(redoShapeCmd);
+						
+						
+					});
+	            logList(selectedShapesList);
+				
+				if(model.isEmpty()) {
+					
+					setDraw();
+				
+				}
+			
+			}else if (operation.equals("Modify:")) {
+				if(selectedShape != null) {
+					
+					Shape shape;
+					
+					if(loggedShape.equals("Point=")) {
+						
+						Point point = new Point(Integer.parseInt(cmdArray[2]),Integer.parseInt(cmdArray[3]),Color.decode(cmdArray[5]));
+						updatePointCmd = new UpdatePointCmd((Point)model.getShape(model.getSelected()),point);
+						
+						updatePointCmd.execute();
+						model.addToUndoList(updatePointCmd);
+					}else if(loggedShape.equals("Line=")) {
+						
+						Line line = new Line(new Point(Integer.parseInt(cmdArray[2]),Integer.parseInt(cmdArray[3])),new Point(Integer.parseInt(cmdArray[7]),Integer.parseInt(cmdArray[8])), new Color(Integer.parseInt(cmdArray[12])));
+						updateLineCmd = new UpdateLineCmd((Line)model.getShape(model.getSelected()),line);
+						
+						updateLineCmd.execute();
+						model.addToUndoList(updateLineCmd);
+						
+					}else if(loggedShape.equals("Rectangle=")) {
+						
+						shape = new Rectangle(new Point (Integer.parseInt(cmdArray[3]),Integer.parseInt(cmdArray[4])), Integer.parseInt(cmdArray[8]), Integer.parseInt(cmdArray[10]),new Color(Integer.parseInt(cmdArray[12])),new Color(Integer.parseInt(cmdArray[14])));
+						updateRectCmd = new UpdateRectCmd((Rectangle)model.getShape(model.getSelected()),(Rectangle)shape);
+						updateRectCmd.execute();
+						model.addToUndoList(updateRectCmd);
+					}else if(loggedShape.equals("Donut=")) {
+						
+						shape = new Donut(new Point (Integer.parseInt(cmdArray[3]),Integer.parseInt(cmdArray[4])), Integer.parseInt(cmdArray[8]),Integer.parseInt(cmdArray[14]),new Color(Integer.parseInt(cmdArray[10])),new Color(Integer.parseInt(cmdArray[12])));
+						updateDonutCmd = new UpdateDonutCmd((Donut)model.getShape(model.getSelected()),(Donut)shape,model);
+						
+						updateDonutCmd.execute();
+						model.addToUndoList(updateDonutCmd);
+					}else if(loggedShape.equals("Circle=")) {
+						
+						Circle circle = new Circle(new Point (Integer.parseInt(cmdArray[3]),Integer.parseInt(cmdArray[4])), Integer.parseInt(cmdArray[8]),new Color(Integer.parseInt(cmdArray[10])),new Color(Integer.parseInt(cmdArray[12])));
+						updateCircleCmd = new UpdateCircleCmd((Circle)model.getShape(model.getSelected()),circle,model);
+						updateCircleCmd.execute();
+						model.addToUndoList(updateCircleCmd);
+					}else if(loggedShape.equals("Hexagon=")) {
+						
+						shape = new HexagonAdapter(new Point (Integer.parseInt(cmdArray[3]),Integer.parseInt(cmdArray[4])), Integer.parseInt(cmdArray[8]),new Color(Integer.parseInt(cmdArray[10])),new Color(Integer.parseInt(cmdArray[12])));
+						updateHexagonCmd = new UpdateHexagonCmd((HexagonAdapter)model.getShape(model.getSelected()),(HexagonAdapter)shape);
+						updateHexagonCmd.execute();
+						model.addToUndoList(updateHexagonCmd);
+					}
+					
+						
+				}
+						
+			}else if (operation.equals("Select:")) {
+				setMorD();
+				
+				if(loggedShape.equals("Point=")) {
+					selectedShape = new Point(Integer.parseInt(cmdArray[2]),Integer.parseInt(cmdArray[3]),Color.decode(cmdArray[5]));				
+				}else if(loggedShape.equals("Line=")) {
+					selectedShape = new Line(new Point(Integer.parseInt(cmdArray[2]),Integer.parseInt(cmdArray[3])),new Point(Integer.parseInt(cmdArray[7]),Integer.parseInt(cmdArray[8])), new Color(Integer.parseInt(cmdArray[12])));
+				}else if(loggedShape.equals("Rectangle=")) {
+					selectedShape = new Rectangle(new Point (Integer.parseInt(cmdArray[3]),Integer.parseInt(cmdArray[4])), Integer.parseInt(cmdArray[8]), Integer.parseInt(cmdArray[10]),new Color(Integer.parseInt(cmdArray[12])),new Color(Integer.parseInt(cmdArray[14])));
+				}else if(loggedShape.equals("Donut=")) {
+					selectedShape = new Donut(new Point (Integer.parseInt(cmdArray[3]),Integer.parseInt(cmdArray[4])), Integer.parseInt(cmdArray[8]),Integer.parseInt(cmdArray[14]),new Color(Integer.parseInt(cmdArray[10])),new Color(Integer.parseInt(cmdArray[12])));
+				}else if(loggedShape.equals("Circle=")) {
+					
+					selectedShape = new Circle(new Point (Integer.parseInt(cmdArray[3]),Integer.parseInt(cmdArray[4])), Integer.parseInt(cmdArray[8]),new Color(Integer.parseInt(cmdArray[10])),new Color(Integer.parseInt(cmdArray[12])));
+				}else if(loggedShape.equals("Hexagon=")) {
+					selectedShape = new HexagonAdapter(new Point (Integer.parseInt(cmdArray[3]),Integer.parseInt(cmdArray[4])), Integer.parseInt(cmdArray[8]),new Color(Integer.parseInt(cmdArray[10])),new Color(Integer.parseInt(cmdArray[12])));
+				}
+				
+				model.getShapeList().forEach(shape -> {
+					if(shape.toString().equals(selectedShape.toString())) {
+						selectShapeCmd = new SelectShapeCmd(shape,model);
+						selectShapeCmd.execute();
+						model.addToUndoList(selectShapeCmd);
+						
+						selectedShape = shape;
+					}
+				});;
+
+				//frame.getBtnUndo().setEnabled(true); I GORE
+			
+				
+			}else if (operation.equals("Deselect:") && selectedShape != null) {
+				if(loggedShape.equals("ALL")) {
+					 ArrayList<Shape> selectedShapes= new ArrayList<Shape>();
+			            model.getShapeList().forEach(shape -> {
+			            	if(shape.isSelected())
+			            		selectedShapes.add(shape);});
+			            deselectAllCmd = new DeselectAllCmd(selectedShapes,model);
+			            deselectAllCmd.execute();
+			            model.addToUndoList(deselectAllCmd);
+			            
+			           
+				}else {
+					if(loggedShape.equals("Point=")) {
+						selectedShape = new Point(Integer.parseInt(cmdArray[2]),Integer.parseInt(cmdArray[3]),Color.decode(cmdArray[5]));					
+					}else if(loggedShape.equals("Line=")) {
+						selectedShape = new Line(new Point(Integer.parseInt(cmdArray[2]),Integer.parseInt(cmdArray[3])),new Point(Integer.parseInt(cmdArray[7]),Integer.parseInt(cmdArray[8])), new Color(Integer.parseInt(cmdArray[12])));
+					}else if(loggedShape.equals("Rectangle=")) {
+						selectedShape = new Rectangle(new Point (Integer.parseInt(cmdArray[3]),Integer.parseInt(cmdArray[4])), Integer.parseInt(cmdArray[8]), Integer.parseInt(cmdArray[10]),new Color(Integer.parseInt(cmdArray[12])),new Color(Integer.parseInt(cmdArray[14])));
+					}else if(loggedShape.equals("Donut=")) {
+						selectedShape = new Donut(new Point (Integer.parseInt(cmdArray[3]),Integer.parseInt(cmdArray[4])), Integer.parseInt(cmdArray[8]),Integer.parseInt(cmdArray[14]),new Color(Integer.parseInt(cmdArray[10])),new Color(Integer.parseInt(cmdArray[12])));
+					}else if(loggedShape.equals("Circle=")) {
+						selectedShape = new Circle(new Point (Integer.parseInt(cmdArray[3]),Integer.parseInt(cmdArray[4])), Integer.parseInt(cmdArray[8]),new Color(Integer.parseInt(cmdArray[10])),new Color(Integer.parseInt(cmdArray[12])));
+					}else if(loggedShape.equals("Hexagon=")) {
+						selectedShape = new HexagonAdapter(new Point (Integer.parseInt(cmdArray[3]),Integer.parseInt(cmdArray[4])), Integer.parseInt(cmdArray[8]),new Color(Integer.parseInt(cmdArray[10])),new Color(Integer.parseInt(cmdArray[12])));
+					}
+					
+					model.getShapeList().forEach(shape -> {
+						if(shape.toString().equals(selectedShape.toString())) {
+							deselectShapeCmd = new DeselectShapeCmd(shape,model);
+							deselectShapeCmd.execute();
+							model.addToUndoList(deselectAllCmd);
+							
+							
+						}
+					});;
+				}
+				
+			}
+			
+			if(model.getShapeList().size() > 0) {
+				
+				//frame.getBtnSelect().setEnabled(true);
+			}
+			//selectedShapes.setNumberOfSelected(getNumberOfSelected());
+			
+			//if((operation.equals("Draw:")) || (operation.equals("Modify:")) || (operation.equals("Select:")) || (operation.equals("Deselect:")) )
+			//arrayList.add(logActivity);
+			
+			frame.getLogList().setModel(toDlm());
+			
+			frame.repaint();
+
+			logStep++;
+				if(logStep == loadedLog.size()) {
+					
+					frame.getBtnNextStep().setEnabled(false);
+				}
+			
+		}
 		
+		
+		public void stopCurrentLog(){
+			if(loadedLog != null && frame.getBtnNextStep().isEnabled())
+			if(loadedLog.size()>0) {
+				if (JOptionPane.showConfirmDialog(null, "You have not finished loading", "Stop logging", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == 0) {
+				loadedLog.clear();
+				logStep=0;
+				frame.getBtnNextStep().setEnabled(false);		
+				}
+			}
+		}
 
 		
 	}

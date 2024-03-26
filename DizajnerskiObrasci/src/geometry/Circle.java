@@ -23,6 +23,12 @@ public class Circle extends SurfaceShape implements Cloneable, Serializable{
 		setSelected(selected);
 	}
 	
+	public Circle(Point center, int radius, Color color, Color innerColor) {
+		this(center, radius);
+		setColor(color);
+		setInnerColor(innerColor);
+	}
+	
 	public Circle(Point center, int radius, boolean selected, Color color) {
 		this(center, radius, selected);
 		this.setColor(color);
@@ -120,7 +126,8 @@ public class Circle extends SurfaceShape implements Cloneable, Serializable{
 
 	
 	public String toString() {
-		return "Center=" + center + ", Radius=" + radius;
+		return "Center: "+center+" radius= "+ radius + " borderColor= " + color.getRGB() + " innerColor= " + innerColor.getRGB() ;
+
 	}
 
 	@Override

@@ -22,6 +22,12 @@ public class Line extends Shape {
 		setSelected(selected);
 	}
 	
+	public Line(Point startPoint, Point endPoint, Color color) {
+		this(startPoint,endPoint);
+		this.setColor(color);
+		
+	}
+	
 	public Line(Point startPoint, Point endPoint, boolean selected, Color color) {
 		this(startPoint, endPoint, selected);
 		this.setColor(color);
@@ -92,7 +98,7 @@ public class Line extends Shape {
 	}
 	
 	public String toString() {
-		return startPoint + "-->" + endPoint;
+		return startPoint+" --> "+endPoint + " color= " + color.getRGB();
 	}
 
 	@Override

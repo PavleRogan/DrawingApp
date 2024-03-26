@@ -6,8 +6,8 @@ import java.io.Serializable;
 
 public abstract class Shape implements Moveable, Comparable, Serializable {
 	
-	private boolean selected;
-	private Color color;
+	protected boolean selected;
+	protected Color color;
 	
 	public  Shape() {
 		

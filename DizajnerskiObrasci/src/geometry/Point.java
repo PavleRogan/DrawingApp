@@ -101,9 +101,15 @@ public class Point extends Shape {
 	}
 	
 	
+		
 	public String toString() {
-		return "(" + x + "," + y + ")";
+			if (color != null) {
+			return x+ " " + y + " colorOfPoint= " + color.getRGB();
+			}
+			return x+ " " + y + " colorOfPoint= null";
 	}
+		
+	
 
 	@Override
 	public void moveTo(int x, int y) {

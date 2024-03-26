@@ -24,6 +24,13 @@ public class Donut extends Circle {
 		setSelected(selected);
 	}
 	
+	public Donut(Point center, int radius, int innerRadius,Color color, Color innerColor) {
+			
+			this(center, radius, innerRadius);
+			setColor(color);
+			setInnerColor(innerColor);
+		}
+	
 	public Donut(Point center, int radius, int innerRadius, boolean selected, Color color) {
 		this(center, radius, innerRadius, selected);
 		this.setColor(color);
@@ -104,7 +111,7 @@ public class Donut extends Circle {
 	}
 	
 	public String toString() {
-		return super.toString() + "Inner Radius=" + innerRadius;
+		return super.toString() + " innerRadius= "+innerRadius;
 	}
 	
 	public Donut deepCopy(Donut donut) {
