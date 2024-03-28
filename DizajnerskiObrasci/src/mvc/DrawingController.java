@@ -4,7 +4,9 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -107,6 +109,7 @@ public class DrawingController {
 
 	public void mouseClicked(MouseEvent e) {
 		
+		stopCurrentLog();
 		Point mouseClick = new Point(e.getX(), e.getY());
 		
 		//model.deselect();
@@ -278,8 +281,10 @@ public class DrawingController {
 	
 	
 	private void addActionToUndo(Shape shape) {
+		
 		addShapeCmd = new AddShapeCmd(shape, model);
 		addShapeCmd.execute();
+		
 	}
 
 	public void setDraw() {
@@ -310,6 +315,8 @@ public class DrawingController {
 	}
 	
 	public void actionPerformedModify() {
+		
+		stopCurrentLog();
 		int index = model.getSelected();
 		if (index == -1) return;
 		
@@ -432,6 +439,7 @@ public class DrawingController {
 		}
 	
 		public void actionPerformedDelete() {
+			stopCurrentLog();
 			if (model.isEmpty()) return;
 			int index = model.getSelected();
 			
@@ -469,7 +477,12 @@ public class DrawingController {
 	
 	
 
-		public void actionPerformedUndo(ActionEvent e) {
+		public void actionPerformedUndo() {
+			stopCurrentLog();
+			undo();
+		}
+		
+		public void undo() {
 			if(model.getUndoList().size()==0) {
 				JOptionPane.showMessageDialog(frame, "There are no commands to undo.");
 			} 
@@ -485,9 +498,16 @@ public class DrawingController {
 				frame.getLogList().setModel(toDlm());
 					
 			}
+			
 		}
+		
 
-		public void actionPerformedRedo(ActionEvent e) {
+		public void actionPerformedRedo() {
+			stopCurrentLog();
+			redo();
+		}
+		
+		public void redo() {
 			if(model.getRedoList().size()==0) {
 				JOptionPane.showMessageDialog(frame, "There are no commands to redo.");
 			} else {
@@ -524,9 +544,17 @@ public class DrawingController {
 			}
 			
 		}
+		
+		public void toFrontClick() {
+			stopCurrentLog();
+			toFront();
+			model.clearRedoList();
+			
+		}
 
 		public void toBack() {
 			// TODO Auto-generated method stub
+			
 			if(model.getShapeList().size()>0) {
 				Shape selectedShape = model.getShapeList().get(model.getSelected());
 				toBackCmd = new ToBackCmd(model, selectedShape);
@@ -536,8 +564,15 @@ public class DrawingController {
 			}
 			
 		}
+		
+		public void toBackClick() {
+			stopCurrentLog();
+			toBack();
+			model.clearRedoList();
+		}
 
 		public void bringToFront() {
+			
 			if(model.getShapeList().size()>0) {
 				
 				Shape selected = model.getShapeList().get(model.getSelected());
@@ -552,8 +587,15 @@ public class DrawingController {
 			}
 			
 		}
+		
+		public void bringToFrontClick() {
+			stopCurrentLog();
+			bringToFront();
+			
+		}
 
 		public void bringToBack() {
+			
 			
 			if(model.getShapeList().size()>0) {
 				
@@ -566,6 +608,12 @@ public class DrawingController {
 	
 				frame.repaint();
 			}
+			
+		}
+		
+		public void bringToBackClick() {
+			stopCurrentLog();
+			bringToBack();
 			
 		}
 		
@@ -699,7 +747,6 @@ public class DrawingController {
 		public void loadLog() {
 			
 			stopCurrentLog();
-			
 			JFileChooser jFileChooser = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
 			int dlg = jFileChooser.showOpenDialog(frame);
 			File file = jFileChooser.getSelectedFile();
@@ -724,9 +771,11 @@ public class DrawingController {
 					frame.getLogList().removeAll();
 					
 					frame.getBtnUndo().setEnabled(false);
+					frame.getBtnRedo().setEnabled(false);
 					frame.getBtnNextStep().setEnabled(true);
 					
-					listToLog.addAll(loadedLog);
+					model.clear();
+					listToLog.clear();
 					frame.getLogList().setModel(toDlm());
 
 				}  catch (IOException ioe) {
@@ -753,21 +802,18 @@ public class DrawingController {
 			String operation = cmdArray[0];
 			String loggedShape ="";
 			
-			 System.out.println("Operation: " + operation);
+			 //System.out.println("Operation: " + operation);
 			
 			if(cmdArray.length>1) {
 				
 				loggedShape = cmdArray[1];
-				 System.out.println(" " + loggedShape);
+				// System.out.println(" logged shape" + loggedShape);
 
 			}
 			if(operation.equals("Draw:")) {
 				
 				setDraw();
-				
-				
 				Shape shape;
-				
 				if(loggedShape.equals("Point=")) {
 					
 					shape = new Point(Integer.parseInt(cmdArray[2]),Integer.parseInt(cmdArray[3]),Color.decode(cmdArray[5]));
@@ -799,23 +845,18 @@ public class DrawingController {
 					addShapeCmd = new AddShapeCmd(shape, model);
 					
 				}
-				//addShapeCmd.execute();
-				//commandList.add(addShapeCmd);
-				//model.addToUndoList(addShapeCmd);
 				
-				if (addShapeCmd != null) {
 				    addShapeCmd.execute();
 				    model.addToUndoList(addShapeCmd);
-				} else {
-				    // Handle the case where addShapeCmd is null
-				    System.err.println("addShapeCmd is null. Cannot execute.");
-				}
+				
 				
 				frame.getBtnUndo().setEnabled(true);	
+				frame.getBtnRedo().setEnabled(true);
 				
 				
 			}else if (operation.equals("Delete:")) {
 				ArrayList<Shape> selectedShapesList= new ArrayList<Shape>();
+				
 	            model.getShapeList().forEach(shape -> {
 	            	if(shape.isSelected())
 	            		selectedShapesList.add(shape);});
@@ -835,6 +876,8 @@ public class DrawingController {
 				}
 			
 			}else if (operation.equals("Modify:")) {
+				
+				System.out.println("selected: " + selectedShape.toString());
 				if(selectedShape != null) {
 					
 					Shape shape;
@@ -842,51 +885,51 @@ public class DrawingController {
 					if(loggedShape.equals("Point=")) {
 						
 						Point point = new Point(Integer.parseInt(cmdArray[2]),Integer.parseInt(cmdArray[3]),Color.decode(cmdArray[5]));
-						updatePointCmd = new UpdatePointCmd((Point)model.getShape(model.getSelected()),point);
+						updatePointCmd = new UpdatePointCmd((Point)model.getShape(model.getSelected()),point,model);
 						
 						updatePointCmd.execute();
-						model.addToUndoList(updatePointCmd);
+						//model.addToUndoList(updatePointCmd);
 					}else if(loggedShape.equals("Line=")) {
 						
 						Line line = new Line(new Point(Integer.parseInt(cmdArray[2]),Integer.parseInt(cmdArray[3])),new Point(Integer.parseInt(cmdArray[7]),Integer.parseInt(cmdArray[8])), new Color(Integer.parseInt(cmdArray[12])));
-						updateLineCmd = new UpdateLineCmd((Line)model.getShape(model.getSelected()),line);
+						updateLineCmd = new UpdateLineCmd((Line)model.getShape(model.getSelected()),line,model);
 						
 						updateLineCmd.execute();
-						model.addToUndoList(updateLineCmd);
+						//model.addToUndoList(updateLineCmd);
 						
 					}else if(loggedShape.equals("Rectangle=")) {
 						
 						shape = new Rectangle(new Point (Integer.parseInt(cmdArray[3]),Integer.parseInt(cmdArray[4])), Integer.parseInt(cmdArray[8]), Integer.parseInt(cmdArray[10]),new Color(Integer.parseInt(cmdArray[12])),new Color(Integer.parseInt(cmdArray[14])));
-						updateRectCmd = new UpdateRectCmd((Rectangle)model.getShape(model.getSelected()),(Rectangle)shape);
+						updateRectCmd = new UpdateRectCmd((Rectangle)model.getShape(model.getSelected()),(Rectangle)shape,model);
 						updateRectCmd.execute();
-						model.addToUndoList(updateRectCmd);
+						//model.addToUndoList(updateRectCmd);
 					}else if(loggedShape.equals("Donut=")) {
 						
 						shape = new Donut(new Point (Integer.parseInt(cmdArray[3]),Integer.parseInt(cmdArray[4])), Integer.parseInt(cmdArray[8]),Integer.parseInt(cmdArray[14]),new Color(Integer.parseInt(cmdArray[10])),new Color(Integer.parseInt(cmdArray[12])));
 						updateDonutCmd = new UpdateDonutCmd((Donut)model.getShape(model.getSelected()),(Donut)shape,model);
 						
 						updateDonutCmd.execute();
-						model.addToUndoList(updateDonutCmd);
+						//model.addToUndoList(updateDonutCmd);
 					}else if(loggedShape.equals("Circle=")) {
 						
 						Circle circle = new Circle(new Point (Integer.parseInt(cmdArray[3]),Integer.parseInt(cmdArray[4])), Integer.parseInt(cmdArray[8]),new Color(Integer.parseInt(cmdArray[10])),new Color(Integer.parseInt(cmdArray[12])));
 						updateCircleCmd = new UpdateCircleCmd((Circle)model.getShape(model.getSelected()),circle,model);
 						updateCircleCmd.execute();
-						model.addToUndoList(updateCircleCmd);
+						//model.addToUndoList(updateCircleCmd);
 					}else if(loggedShape.equals("Hexagon=")) {
 						
 						shape = new HexagonAdapter(new Point (Integer.parseInt(cmdArray[3]),Integer.parseInt(cmdArray[4])), Integer.parseInt(cmdArray[8]),new Color(Integer.parseInt(cmdArray[10])),new Color(Integer.parseInt(cmdArray[12])));
-						updateHexagonCmd = new UpdateHexagonCmd((HexagonAdapter)model.getShape(model.getSelected()),(HexagonAdapter)shape);
+						updateHexagonCmd = new UpdateHexagonCmd((HexagonAdapter)model.getShape(model.getSelected()),(HexagonAdapter)shape,model);
 						updateHexagonCmd.execute();
-						model.addToUndoList(updateHexagonCmd);
+						//model.addToUndoList(updateHexagonCmd);
 					}
 					
 						
 				}
 						
 			}else if (operation.equals("Select:")) {
-				setMorD();
 				
+				setMorD();
 				if(loggedShape.equals("Point=")) {
 					selectedShape = new Point(Integer.parseInt(cmdArray[2]),Integer.parseInt(cmdArray[3]),Color.decode(cmdArray[5]));				
 				}else if(loggedShape.equals("Line=")) {
@@ -906,8 +949,7 @@ public class DrawingController {
 					if(shape.toString().equals(selectedShape.toString())) {
 						selectShapeCmd = new SelectShapeCmd(shape,model);
 						selectShapeCmd.execute();
-						model.addToUndoList(selectShapeCmd);
-						
+						//model.addToUndoList(selectShapeCmd);
 						selectedShape = shape;
 					}
 				});;
@@ -923,7 +965,7 @@ public class DrawingController {
 			            		selectedShapes.add(shape);});
 			            deselectAllCmd = new DeselectAllCmd(selectedShapes,model);
 			            deselectAllCmd.execute();
-			            model.addToUndoList(deselectAllCmd);
+			            //model.addToUndoList(deselectAllCmd);
 			            
 			           
 				}else {
@@ -945,32 +987,50 @@ public class DrawingController {
 						if(shape.toString().equals(selectedShape.toString())) {
 							deselectShapeCmd = new DeselectShapeCmd(shape,model);
 							deselectShapeCmd.execute();
-							model.addToUndoList(deselectAllCmd);
+							//model.addToUndoList(deselectAllCmd);
 							
 							
 						}
 					});;
 				}
 				
+			}else if (operation.equals("Undo")) {
+				undo();
+				
+			}else if (operation.equals("Redo")) {
+				redo();
+			}else if (operation.equals("ToFront:")) {
+				toFront();
+				
+			}else if (operation.equals("ToBack:")) {
+				toBack();
+			}else if (operation.equals("BringToFront:")) {
+				bringToFront();
+				
+			}else if (operation.equals("BringToBack:")) {
+				bringToBack();
 			}
 			
 			if(model.getShapeList().size() > 0) {
 				
 				//frame.getBtnSelect().setEnabled(true);
 			}
-			//selectedShapes.setNumberOfSelected(getNumberOfSelected());
+			this.selectedShapes.setNumOfSelectedShapes(model.getNumberOfSelectedShapes());
 			
-			//if((operation.equals("Draw:")) || (operation.equals("Modify:")) || (operation.equals("Select:")) || (operation.equals("Deselect:")) )
-			//arrayList.add(logActivity);
+			if((operation.equals("Draw:")) || (operation.equals("Modify:")) || (operation.equals("Select:")) || (operation.equals("Deselect:")) )
+			listToLog.add(logLine);
 			
 			frame.getLogList().setModel(toDlm());
 			
 			frame.repaint();
 
 			logStep++;
-				if(logStep == loadedLog.size()) {
+				
+			if(logStep == loadedLog.size()) {
 					
+				//stopCurrentLog();
 					frame.getBtnNextStep().setEnabled(false);
+					
 				}
 			
 		}
@@ -985,6 +1045,59 @@ public class DrawingController {
 				frame.getBtnNextStep().setEnabled(false);		
 				}
 			}
+		}
+
+		public void loadDrawing() {
+			
+			stopCurrentLog();
+			JFileChooser jFileChooser = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+			int dlg = jFileChooser.showOpenDialog(frame);
+			File file = jFileChooser.getSelectedFile();
+			
+			if (dlg == JFileChooser.APPROVE_OPTION) {
+				
+				try {
+					FileInputStream fileInputStream = new FileInputStream(file);
+					
+					ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+					model.clear();
+					listToLog.clear();
+					frame.getLogList().setModel(toDlm()); 
+					
+					setDraw();
+					ArrayList<Shape> tempList = (ArrayList<Shape>) objectInputStream.readObject();
+					tempList.forEach(shape-> shape.setSelected(false));
+					
+					tempList.forEach(shape->{
+						addShapeCmd= new AddShapeCmd(shape, model);
+						addShapeCmd.execute();
+						//
+						log(shape,"Draw");
+					});
+					objectInputStream.close();
+					fileInputStream.close();
+					if(model.size()>0) {
+						
+						//frame.getBtnMorD().setEnabled(true);
+						frame.getBtnUndo().setEnabled(true);
+						frame.getBtnRedo().setEnabled(false);
+					}
+				} catch (ClassNotFoundException e) {
+					JOptionPane.showMessageDialog(null, "File not found!", "Message", JOptionPane.INFORMATION_MESSAGE);
+
+				} catch (IOException ioe) {
+					JOptionPane.showMessageDialog(null, "An error occured!", "Message",
+							JOptionPane.INFORMATION_MESSAGE);
+				}
+				
+				
+				this.selectedShapes.setNumOfSelectedShapes(model.getNumberOfSelectedShapes());
+				frame.getView().repaint();
+				
+			} else {
+				JOptionPane.showMessageDialog(null, "Loading cancelled!", "Message", JOptionPane.INFORMATION_MESSAGE);
+			}
+			
 		}
 
 		

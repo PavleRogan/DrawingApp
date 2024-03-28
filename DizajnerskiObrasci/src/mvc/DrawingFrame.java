@@ -130,6 +130,16 @@ public class DrawingFrame extends JFrame {
 	}
 
 
+	public JButton getBtnRedo() {
+		return btnRedo;
+	}
+
+
+	public void setBtnRedo(JButton btnRedo) {
+		this.btnRedo = btnRedo;
+	}
+
+
 	public void setBtnInnerColor(JButton btnInnerColor) {
 		this.btnInnerColor = btnInnerColor;
 	}
@@ -206,13 +216,13 @@ public class DrawingFrame extends JFrame {
 		
 		btnUndo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				controller.actionPerformedUndo(e);
+				controller.actionPerformedUndo();
 			}
 		});
 		
 		btnRedo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				controller.actionPerformedRedo(e);
+				controller.actionPerformedRedo();
 			}
 		});
 		
@@ -333,12 +343,12 @@ public class DrawingFrame extends JFrame {
 		contentPane.add(panelEast, BorderLayout.EAST);
 		btnToFront.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				controller.toFront();
+				controller.toFrontClick();
 			}
 		});
 		btnToBack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				controller.toBack();
+				controller.toBackClick();
 			}
 		});
 		
@@ -347,13 +357,13 @@ public class DrawingFrame extends JFrame {
 		
 		btnBringToFront.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				controller.bringToFront();
+				controller.bringToFrontClick();
 			}
 		});
 		
 		btnBringToBack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				controller.bringToBack();
+				controller.bringToBackClick();
 				
 			}
 		});
@@ -372,6 +382,13 @@ public class DrawingFrame extends JFrame {
 			}
 		});
 		
+		JButton btnLoadDrawing = new JButton("Load Drawing");
+		btnLoadDrawing.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				controller.loadDrawing();
+			}
+		});
+		
 		
 		
 		
@@ -379,19 +396,20 @@ public class DrawingFrame extends JFrame {
 		
 		GroupLayout gl_panelEast = new GroupLayout(panelEast);
 		gl_panelEast.setHorizontalGroup(
-			gl_panelEast.createParallelGroup(Alignment.LEADING)
-				.addGroup(Alignment.TRAILING, gl_panelEast.createSequentialGroup()
+			gl_panelEast.createParallelGroup(Alignment.TRAILING)
+				.addGroup(gl_panelEast.createSequentialGroup()
 					.addContainerGap()
-					.addGroup(gl_panelEast.createParallelGroup(Alignment.TRAILING)
-						.addComponent(btnNextStep, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
-						.addComponent(btnSaveDrawing, GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
-						.addComponent(btnSaveLog, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
-						.addComponent(scrollPane, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
-						.addComponent(btnToFront, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
-						.addComponent(btnToBack, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
-						.addComponent(btnBringToFront, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
-						.addComponent(btnBringToBack, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
-						.addComponent(btnLoadLog, GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE))
+					.addGroup(gl_panelEast.createParallelGroup(Alignment.LEADING)
+						.addComponent(btnSaveDrawing, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
+						.addComponent(btnSaveLog, GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
+						.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
+						.addComponent(btnToFront, GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
+						.addComponent(btnToBack, GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
+						.addComponent(btnBringToFront, GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
+						.addComponent(btnBringToBack, GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
+						.addComponent(btnLoadLog, GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
+						.addComponent(btnLoadDrawing, GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
+						.addComponent(btnNextStep, GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE))
 					.addContainerGap())
 		);
 		gl_panelEast.setVerticalGroup(
@@ -411,11 +429,13 @@ public class DrawingFrame extends JFrame {
 					.addComponent(btnSaveLog)
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(btnSaveDrawing)
-					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(btnLoadLog)
-					.addGap(18)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(btnLoadDrawing)
+					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(btnNextStep)
-					.addGap(355))
+					.addGap(344))
 		);
 		scrollPane.setViewportView(logList);
 		panelEast.setLayout(gl_panelEast);

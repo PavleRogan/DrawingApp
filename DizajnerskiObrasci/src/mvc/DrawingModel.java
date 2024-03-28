@@ -87,9 +87,10 @@ public class DrawingModel {
 	}
 	
 	public void addToUndoList (Command cmd) {
-		System.out.println("Add to undoList" + cmd.getCmdName());
-		if(!undoList.contains(cmd)) {
+		
+		if(cmd != null && !undoList.contains(cmd)) {
 			undoList.add(cmd);
+			System.out.println("Add to undoList" + cmd.getCmdName());
 		}
 	}
 	
@@ -115,14 +116,14 @@ public class DrawingModel {
 	}
 	
 	public void addToRedoList (Command cmd) {
-		System.out.println("Add to redoList " + cmd.getCmdName());
+		//System.out.println("Add to redoList " + cmd.getCmdName());
 		if(!redoList.contains(cmd)) {
 			redoList.add(cmd);
 		}
 	}
 	
 	public void deleteFromRedoList (Command cmd) {
-		System.out.println("Delete from redoList "+ cmd.getCmdName());
+		//System.out.println("Delete from redoList "+ cmd.getCmdName());
 		redoList.remove(cmd);
 	}
 
@@ -147,6 +148,17 @@ public class DrawingModel {
 	
 	public void clearRedoList() {
 		this.redoList.clear();
+	}
+	
+	public void clear() {
+		shapeList.clear();
+		redoList.clear();
+		undoList.clear();
+		
+	}
+	
+	public int size() {
+		return this.shapeList.size();
 	}
 	
 
